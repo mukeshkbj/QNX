@@ -1,0 +1,9 @@
+build/
+target/build/
+thirdparty/*/build/
+/dashboard.html
+jolt-out/debug/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/

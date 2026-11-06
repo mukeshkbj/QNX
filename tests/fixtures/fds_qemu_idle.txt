@@ -1,0 +1,269 @@
+     pid name                         
+       1 /proc/boot/procnto-smp-instr 
+	   0   65544 r-        0 /system/bin/sshd-session
+	   1   49157 rw        0 /dev/ser1
+	   2   65544 r-        0 /system/bin/random
+	   3   65544 r-        0 /system/bin/pipe
+	   4   65544 r-        0 /system/bin/devc-pty
+	   5   65544 r-        0 /system/bin/dumper
+	   6   65544 r-        0 /system/bin/io-sock
+	   7   65544 r-        0 /system/bin/sshd-auth
+	   8   65544 r-        0 /system/lib/dll/mods-phy.so
+	   9   65544 r-        0 /system/lib/dll/mods-pci.so
+	  10   65544 r-        0 /system/lib/dll/mods-usb.so
+	  11   65544 r-        0 /system/lib/libusbdci.so.2
+	  12   65544 r-        0 /system/lib/dll/devs-vtnet_pci.so
+	  13   65544 r-        0 /system/lib/dll/pam/pam_qnx.so
+	  15   65544 r-        0 /system/bin/dhcpcd
+	  16   65544 r-        0 /system/bin/sshd
+	  17   65544 r-        0 /system/lib/libpam.so.2
+	  18   65544 r-        0 /system/bin/qconn
+	  19   65544 r-        0 /system/lib/libtracelog.so.1
+	  20   65544 r-        0 /system/bin/mqueue
+	  21   65544 r-        0 /system/bin/io-usb-otg
+	  22   65544 r-        0 /system/lib/dll/devu-hcd-uhci.so
+	  23   65544 r-        0 /system/lib/dll/devu-hcd-ehci.so
+	  24   65544 r-        0 /system/lib/dll/devu-hcd-xhci.so
+	   0s      1 <procnto>:1
+   16387 proc/boot/slogger2           
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   3s      1 MP        0 /dev/slog
+	   4s      1 MP        0 /dev/slog2/notify
+	   5s      1 MP        0 /dev/slog2/stdout/
+	   6s  16387 <slogger2>:1
+	   7s      1 MP        0 /dev/slog2/stderr/
+	   8s      1 MP        0 /dev/console
+   28676 proc/boot/pci-server         
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s      1 MP        0 /dev/pci/server_id_1/
+   49157 proc/boot/devc-ser8250       
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   0s      1 <procnto>:1
+	   1s  49157 <devc-ser8250>:1
+	   2s      1 MP        0 /dev/ser1
+	   3s      1 MP        0 /dev/ser2
+   57351 proc/boot/ksh                
+	   0   49157 rw        0 /dev/ser1
+	   1   49157 rw        0 /dev/ser1
+	   2   49157 rw        0 /dev/ser1
+	  10   49157 rw        0 /dev/ser1
+	   0s      1 <procnto>:1
+   61446 proc/boot/fsevmgr            
+	   0       1 rw        0 /dev/null
+	   1       1 rw        0 /dev/null
+	   2       1 rw        0 /dev/null
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s      1 MP        0 /dev/fsmgr
+	   3s      1 MP        0 /dev/fsnotify
+	   4s  65544 <devb-eide>:6
+   65544 proc/boot/devb-eide          
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   3   16387 -w        0 /dev/slog
+	   4       1 <procnto>:1
+	   5       1 <procnto>:1
+	   6   28676 r-        0 /dev/pci/server_id_1/
+	   7   61446 -w        0 /dev/fsmgr
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s  65544 <devb-eide>:1
+	   3s  65544 <devb-eide>:2
+	   4s  65544 <devb-eide>:3
+	   5s  65544 <devb-eide>:4
+	   6s  65544 <devb-eide>:5
+	   7s      1 MP        0 /
+	   8s      1 MP        0 /dev/hd0
+	   9s      1 MP        0 /dev/hd0t177
+	  10s      1 MP        0 /dev/hd0t178
+	  11s      1 MP        0 /dev/hd0t179
+	  12s      1 MP        0 /boot/
+	  13s      1 MP        0 /system/
+	  14s      1 MP        0 /data/
+  131081 system/bin/random            
+	   0       1 rw        0 /dev/null
+	   1       1 rw        0 /dev/null
+	   2       1 rw        0 /dev/null
+	   3   65544 rw      128 /data/var/random/rnd-seed
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s      1 MP        0 /dev/random
+	   3s      1 MP        0 /dev/urandom
+	   4s 131081 <random>:2
+  143370 system/bin/pipe              
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   0s      1 <procnto>:1
+	   1s      1 MP        0 /
+	   2s      1 MP        0 /dev/pipe
+  155659 system/bin/devc-pty          
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   3   16387 -w        0 /dev/slog
+	   0s      1 <procnto>:1
+	   1s 155659 <devc-pty>:1
+	   2s      1 MP        0 /dev/ttyp0
+	   3s      1 MP        0 /dev/ptyp0
+	   4s      1 MP        0 /dev/ttyp1
+	   5s      1 MP        0 /dev/ptyp1
+	   6s      1 MP        0 /dev/ttyp2
+	   7s      1 MP        0 /dev/ptyp2
+	   8s      1 MP        0 /dev/ttyp3
+	   9s      1 MP        0 /dev/ptyp3
+	  10s      1 MP        0 /dev/ttyp4
+	  11s      1 MP        0 /dev/ptyp4
+	  12s      1 MP        0 /dev/ttyp5
+	  13s      1 MP        0 /dev/ptyp5
+	  14s      1 MP        0 /dev/ttyp6
+	  15s      1 MP        0 /dev/ptyp6
+	  16s      1 MP        0 /dev/ttyp7
+	  17s      1 MP        0 /dev/ptyp7
+  159756 system/bin/dumper            
+	   0       1 rw        0 /dev/text
+	   1   16387 rw        0 /dev/slog2/stdout/
+	   2   16387 rw        0 /dev/slog2/stderr/
+	   3  159756 <dumper>:2
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s      1 MP        0 /proc/dumper
+  163853 system/bin/io-sock           
+	   0       1 r-        0 /dev/null
+	   1   16387 -w        0 /dev/slog2/stdout/
+	   2   16387 -w        0 /dev/slog2/stderr/
+	   3  131081 r-        0 /dev/random
+	   4       1 <procnto>:1
+	   5   28676 r-        0 /dev/pci/server_id_1/
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s      1 MP        0 /dev/socket/1
+	   3s      1 MP        0 /dev/socket/2
+	   4s      1 MP        0 /dev/socket/28
+	   5s      1 MP        0 /dev/socket/17
+	   6s      1 MP        0 /dev/socket/38
+	   7s      1 MP        0 /dev/socket/27
+	   8s      1 MP        0 /dev/tun
+	   9s      1 MP        0 /dev/tap
+	  10s      1 MP        0 /dev/vmnet
+	  11s      1 MP        0 /
+	  12s      1 MP        0 /dev/io-sock/
+	  13s 163853 <io-sock>:3
+	  14s 163853 <io-sock>:4
+	  15s 163853 <io-sock>:5
+	  16s      1 MP        0 /dev/bpf
+	  17s      1 MP        0 /dev/netmap
+	  18s 163853 <io-sock>:6
+	  19s 163853 <io-sock>:7
+	  20s      1 MP        0 /dev/pfil
+	  21s      1 MP        0 /dev/pf
+	  22s 163853 <io-sock>:8
+	  23s 163853 <io-sock>:9
+	  24s 163853 <io-sock>:10
+  225297 system/bin/dhcpcd            
+	   0       1 -w        0 /dev/null
+	   1  163853 rw        0 UDS SEQ   
+	   2  163853 rw        0 UDS SEQ   
+	   3   16387 -w        0 /dev/slog
+	   4   65544 -w        7 /data/var/run/dhcpcd/pid
+	   5  163853 rw        0 UDS STREAM /data/var/run/dhcpcd/sock
+	   6  131081 r-        0 /dev/urandom
+	   7  163853 rw        0 UDS STREAM /data/var/run/dhcpcd/unpriv.sock
+	   8  163853 rw        0 I6UDP  *.*                                                 *.*                                                 
+	   9  163853 rw        0 /dev/socket/17
+	  10  163853 rw        0 I4UDP  *.*                  *.*                  
+	  11  163853 rw        0 I4UDP  *.68                 *.*                  
+	  12  163853 rw        0 I4RAW  *.*                  *.*                  
+	  14  163853 rw        0 /dev/bpf
+	  15  163853 rw        0 I6RAW  *.*                                                 *.*                                                 
+	   0s      1 <procnto>:1
+  249870 system/bin/sshd              
+	   0       1 rw        0 /dev/null
+	   1       1 rw        0 /dev/null
+	   2       1 rw        0 /dev/null
+	   3       1 rw        0 /dev/null
+	   4       1 rw        0 /dev/null
+	   5       1 rw        0 /dev/null
+	   6  131081 r-        0 /dev/urandom
+	   7  163853 rw        0 I6TCP  *.22                                                *.*                                                 LISTEN
+	   8  163853 rw        0 I4TCP  *.22                 *.*                  LISTEN
+	   0s      1 <procnto>:1
+  253967 system/bin/qconn             
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   3  163853 rw        0 I6TCP  *.8000                                              *.*                                                 LISTEN
+	   4  163853 rw        0 I4TCP  *.8000               *.*                  LISTEN
+	   5  253967 <qconn>:1
+	   0s      1 <procnto>:1
+	   1s      1 MP        0 /dev/profiler
+  258064 system/bin/mqueue            
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   0s      1 <procnto>:1
+	   1s      1 MP        0 /
+	   2s      1 MP        0 /dev/mqueue/
+  282643 system/bin/io-usb-otg        
+	   0       1 rw        0 /dev/text
+	   1       1 rw        0 /dev/text
+	   2       1 rw        0 /dev/text
+	   3       1 <procnto>:1
+	   4       1 <procnto>:1
+	   0s      1 <procnto>:1
+	   1s  16387 <slogger2>:1
+	   2s      1 MP        0 /dev/usb/io-usb-otg/
+	   3s 282643 <io-usb-otg>:1
+	   4s      1 MP        0 /dev/usb/ctrl/
+	   5s 282643 <io-usb-otg>:2
+	   6s      1 MP        0 /dev/usb/devu-uhci.so
+	   7s      1 MP        0 /dev/usb/devu-hcd-ehci.so
+	   8s      1 MP        0 /dev/usb/devu-hcd-xhci.so
+  544770 system/bin/sshd-session      
+	   0       1 rw        0 /dev/null
+	   1       1 rw        0 /dev/null
+	   2       1 rw        0 /dev/null
+	   3       1 rw        0 /dev/null
+	   4       1 rw        0 /dev/null
+	   5       1 rw        0 /dev/null
+	   6  131081 r-        0 /dev/urandom
+	   8  163853 rw        0 I4TCP  192.168.122.75.22    192.168.122.1.36406  ESTABLISHED
+	   9  163853 rw        0 UDS STREAM
+	  10  163853 rw        0 UDS STREAM
+	   0s      1 <procnto>:1
+  557074 system/bin/sshd-session      
+	   0       1 rw        0 /dev/null
+	   1       1 rw        0 /dev/null
+	   2       1 rw        0 /dev/null
+	   3       1 rw        0 /dev/null
+	   4       1 rw        0 /dev/null
+	   5       1 rw        0 /dev/null
+	   6  131081 r-        0 /dev/urandom
+	   7  163853 rw        0 UDS STREAM
+	   8  163853 rw        0 I4TCP  192.168.122.75.22    192.168.122.1.36406  ESTABLISHED
+	  10  163853 rw        0 UDS STREAM
+	  11  143370 -w        0 (pipe)
+	  12  143370 r-        0 (pipe)
+	  14  143370 r-        0 (pipe)
+	   0s      1 <procnto>:1
+  557076 bin/sh                       
+	   0  143370 r-        0 (pipe)
+	   1  143370 -w        0 (pipe)
+	   2  143370 -w        0 (pipe)
+	   0s      1 <procnto>:1
+  561173 proc/boot/pidin              
+	   0  143370 r-        0 (pipe)
+	   1  143370 -w        0 (pipe)
+	   2  143370 -w        0 (pipe)
+	   0s      1 <procnto>:1

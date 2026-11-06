@@ -1,0 +1,297 @@
+{
+  "meta": {
+    "target": "qnxvm",
+    "seed": 1,
+    "reset": "sh /tmp/jolt/stack.sh start-fixed",
+    "time": "2026-11-06T11:40:04",
+    "coverage": {
+      "servers": 3,
+      "edges": 4,
+      "fault_kinds": [
+        "delay",
+        "freeze",
+        "kill",
+        "starve"
+      ],
+      "edge_fault_pairs": 13,
+      "experiments": 10
+    },
+    "jolt": "0.1.0"
+  },
+  "graph": {
+    "processes": [
+      {
+        "pid": 62677016,
+        "name": "watchdog",
+        "path": "watchdog",
+        "threads": [
+          {
+            "pid": 62677016,
+            "tid": 1,
+            "name": "watchdog",
+            "state": "RECEIVE",
+            "blocked_on": "1",
+            "blocked_pid": null,
+            "priority": 62
+          }
+        ]
+      },
+      {
+        "pid": 62685210,
+        "name": "actuator",
+        "path": "actuator",
+        "threads": [
+          {
+            "pid": 62685210,
+            "tid": 1,
+            "name": "actuator",
+            "state": "SIGWAITINFO",
+            "blocked_on": null,
+            "blocked_pid": null,
+            "priority": 62
+          },
+          {
+            "pid": 62685210,
+            "tid": 2,
+            "name": "actuator",
+            "state": "RECEIVE",
+            "blocked_on": "1",
+            "blocked_pid": null,
+            "priority": 61
+          },
+          {
+            "pid": 62685210,
+            "tid": 3,
+            "name": "actuator",
+            "state": "NANOSLEEP",
+            "blocked_on": null,
+            "blocked_pid": null,
+            "priority": 62
+          }
+        ]
+      },
+      {
+        "pid": 62693403,
+        "name": "imu",
+        "path": "imu",
+        "threads": [
+          {
+            "pid": 62693403,
+            "tid": 1,
+            "name": "imu",
+            "state": "SIGWAITINFO",
+            "blocked_on": null,
+            "blocked_pid": null,
+            "priority": 62
+          },
+          {
+            "pid": 62693403,
+            "tid": 2,
+            "name": "imu",
+            "state": "RECEIVE",
+            "blocked_on": "1",
+            "blocked_pid": null,
+            "priority": 61
+          },
+          {
+            "pid": 62693403,
+            "tid": 3,
+            "name": "imu",
+            "state": "NANOSLEEP",
+            "blocked_on": null,
+            "blocked_pid": null,
+            "priority": 62
+          }
+        ]
+      },
+      {
+        "pid": 62705687,
+        "name": "planner",
+        "path": "planner",
+        "threads": [
+          {
+            "pid": 62705687,
+            "tid": 1,
+            "name": "planner",
+            "state": "NANOSLEEP",
+            "blocked_on": null,
+            "blocked_pid": null,
+            "priority": 61
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "client_pid": 62685210,
+        "server_pid": 62677016,
+        "via": "coid",
+        "path": null
+      },
+      {
+        "client_pid": 62693403,
+        "server_pid": 62677016,
+        "via": "coid",
+        "path": null
+      },
+      {
+        "client_pid": 62705687,
+        "server_pid": 62693403,
+        "via": "fd:/dev/imu",
+        "path": "/dev/imu"
+      },
+      {
+        "client_pid": 62705687,
+        "server_pid": 62685210,
+        "via": "coid",
+        "path": null
+      }
+    ]
+  },
+  "verdicts": [
+    {
+      "fault": "delay+1500ms:imu",
+      "kind": "delay",
+      "server": "imu",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.48,
+      "recovery_s": 0.02,
+      "episodes": 8,
+      "fix": null
+    },
+    {
+      "fault": "freeze:watchdog",
+      "kind": "freeze",
+      "server": "watchdog",
+      "client": "actuator",
+      "verdict": "idle",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "freeze:watchdog",
+      "kind": "freeze",
+      "server": "watchdog",
+      "client": "imu",
+      "verdict": "idle",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "starve@p60:watchdog",
+      "kind": "starve",
+      "server": "watchdog",
+      "client": "actuator",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.13,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "starve@p60:watchdog",
+      "kind": "starve",
+      "server": "watchdog",
+      "client": "imu",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.13,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "kill:watchdog",
+      "kind": "kill",
+      "server": "watchdog",
+      "client": "actuator",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "kill:watchdog",
+      "kind": "kill",
+      "server": "watchdog",
+      "client": "imu",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "starve@p60:imu",
+      "kind": "starve",
+      "server": "imu",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "kill:imu",
+      "kind": "kill",
+      "server": "imu",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "kill:actuator",
+      "kind": "kill",
+      "server": "actuator",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": null
+    },
+    {
+      "fault": "freeze:imu",
+      "kind": "freeze",
+      "server": "imu",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.8,
+      "recovery_s": 0.02,
+      "episodes": 1,
+      "fix": null
+    },
+    {
+      "fault": "freeze:actuator",
+      "kind": "freeze",
+      "server": "actuator",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.69,
+      "recovery_s": 0.02,
+      "episodes": 1,
+      "fix": null
+    },
+    {
+      "fault": "starve@p60:actuator",
+      "kind": "starve",
+      "server": "actuator",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.11,
+      "episodes": 1,
+      "fix": null
+    }
+  ],
+  "score": 100
+}

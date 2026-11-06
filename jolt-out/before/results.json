@@ -1,0 +1,208 @@
+[
+  {
+    "fault": {
+      "kind": "kill",
+      "server": "imu",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "id": "kill:imu"
+    },
+    "server_pid_before": 49459222,
+    "server_pid_after": null,
+    "server_restarted": false,
+    "recovered": false,
+    "recovery_s": null,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "server-not-restarted",
+        "episodes": 0,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 49459222 clients {'planner': 49475608} -> client 49475608 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "delay",
+      "server": "imu",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 1500,
+      "path": "/dev/imu",
+      "id": "delay+1500ms:imu"
+    },
+    "server_pid_before": 49991702,
+    "server_pid_after": 50503702,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 1.49,
+        "survived": true,
+        "verdict": "slow-intolerant",
+        "episodes": 4,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 50085909 clients {'planner': 50184216} -> client 50184216 longest_ms 1491 episodes 4 samples 239 alive 1 ready_ms 0",
+      "interpose: done. connects 2, forwarded 3, released-by-client-timeout 0, errors 1"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "starve",
+      "server": "imu",
+      "duration": 5.0,
+      "priority": 60,
+      "delay_ms": 0,
+      "path": "",
+      "id": "starve@p60:imu"
+    },
+    "server_pid_before": 50683926,
+    "server_pid_after": 50683926,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.16,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "starved",
+        "episodes": 0,
+        "ready_s": 4.64
+      }
+    ],
+    "notes": [
+      "starve: all CPUs at priority 60",
+      "watch: server 50683926 clients {'planner': 50700312} -> client 50700312 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 4641"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "starve",
+      "server": "actuator",
+      "duration": 5.0,
+      "priority": 60,
+      "delay_ms": 0,
+      "path": "",
+      "id": "starve@p60:actuator"
+    },
+    "server_pid_before": 50909207,
+    "server_pid_after": 50909207,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "starved",
+        "episodes": 0,
+        "ready_s": 4.64
+      }
+    ],
+    "notes": [
+      "starve: all CPUs at priority 60",
+      "watch: server 50909207 clients {'planner': 50925592} -> client 50925592 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 4641"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "kill",
+      "server": "actuator",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "id": "kill:actuator"
+    },
+    "server_pid_before": 51134487,
+    "server_pid_after": 51245082,
+    "server_restarted": true,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 51134487 clients {'planner': 51150872} -> client 51150872 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "freeze",
+      "server": "imu",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "id": "freeze:imu"
+    },
+    "server_pid_before": 51367958,
+    "server_pid_after": 51367958,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 4.83,
+        "survived": true,
+        "verdict": "hang-no-timeout",
+        "episodes": 1,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 51367958 clients {'planner': 51384344} -> client 51384344 longest_ms 4830 episodes 1 samples 239 alive 1 ready_ms 0"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "freeze",
+      "server": "actuator",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "id": "freeze:actuator"
+    },
+    "server_pid_before": 51617815,
+    "server_pid_after": 51617815,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "planner",
+        "longest_block_s": 4.83,
+        "survived": true,
+        "verdict": "hang-no-timeout",
+        "episodes": 1,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 51617815 clients {'planner': 51634200} -> client 51634200 longest_ms 4830 episodes 1 samples 239 alive 1 ready_ms 0"
+    ]
+  }
+]

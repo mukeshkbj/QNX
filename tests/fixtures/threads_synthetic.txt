@@ -1,0 +1,8 @@
+pid|tid|name|STATE|Blocked|prio
+1|1|procnto-smp-instr|READY||0f
+4100|1|imu|RECEIVE|1|10r
+4100|2|imu|RECEIVE|1|10r
+4101|1|actuator|RECEIVE|1|10r
+4101|2|actuator|RECEIVE|1|10r
+4102|1|planner|REPLY|4100|10r
+4103|1|watchdog|NANOSLEEP||10r

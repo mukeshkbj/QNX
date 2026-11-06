@@ -1,0 +1,8 @@
+     1 procnto-smp-instr
+        0  1 rw  0 /dev/null
+  4102 planner
+        0  1 rw  0 /dev/null
+        3s 4100 --  0
+        4s 4101 --  0
+  4103 watchdog
+        0  1 rw  0 /dev/null

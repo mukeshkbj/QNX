@@ -1,0 +1,120 @@
+[
+  {
+    "fault": {
+      "kind": "delay",
+      "server": "eventfd-mgr",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 1500,
+      "path": "/dev/eventfd",
+      "id": "delay+1500ms:eventfd-mgr"
+    },
+    "server_pid_before": 56377366,
+    "server_pid_after": 56672278,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "efd_worker",
+        "longest_block_s": 4.16,
+        "survived": true,
+        "verdict": "slow-intolerant",
+        "episodes": 2,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 56446997 clients {'efd_worker': 56508439} -> client 56508439 longest_ms 4157 episodes 2 samples 239 alive 1 ready_ms 0",
+      "interpose: done. connects 2, forwarded 3, released-by-client-timeout 0, errors 1"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "kill",
+      "server": "eventfd-mgr",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "id": "kill:eventfd-mgr"
+    },
+    "server_pid_before": 56795158,
+    "server_pid_after": null,
+    "server_restarted": false,
+    "recovered": false,
+    "recovery_s": null,
+    "clients": [
+      {
+        "client": "efd_worker",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "server-not-restarted",
+        "episodes": 0,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 56795158 clients {'efd_worker': 56807447} -> client 56807447 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "starve",
+      "server": "eventfd-mgr",
+      "duration": 5.0,
+      "priority": 60,
+      "delay_ms": 0,
+      "path": "",
+      "id": "starve@p60:eventfd-mgr"
+    },
+    "server_pid_before": 57270294,
+    "server_pid_after": 57270294,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "efd_worker",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "starved",
+        "episodes": 0,
+        "ready_s": 4.64
+      }
+    ],
+    "notes": [
+      "starve: all CPUs at priority 60",
+      "watch: server 57270294 clients {'efd_worker': 57282583} -> client 57282583 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 4641"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "freeze",
+      "server": "eventfd-mgr",
+      "duration": 5.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "id": "freeze:eventfd-mgr"
+    },
+    "server_pid_before": 57438230,
+    "server_pid_after": 57438230,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "efd_worker",
+        "longest_block_s": 4.83,
+        "survived": true,
+        "verdict": "hang-no-timeout",
+        "episodes": 1,
+        "ready_s": 0.0
+      }
+    ],
+    "notes": [
+      "watch: server 57438230 clients {'efd_worker': 57450519} -> client 57450519 longest_ms 4830 episodes 1 samples 239 alive 1 ready_ms 0"
+    ]
+  }
+]

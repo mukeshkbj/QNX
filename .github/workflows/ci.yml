@@ -1,0 +1,20 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  host-tests:
+    # Host-side tests only: parsing real pidin captures, planning, scoring, reports.
+    # Target programs need QNX SDP 8.0 (qcc), which isn't available on GitHub runners.
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install pytest
+      - run: python -m pytest -q
+      - name: Report formats from a recorded QNX run
+        run: |
+          python -c "import json; r=json.load(open('jolt-out/after/report.json')); print('recorded after-run score:', r['score'])"

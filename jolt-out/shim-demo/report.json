@@ -1,0 +1,112 @@
+{
+  "meta": {
+    "target": "qnxvm",
+    "seed": 1,
+    "reset": "sh /tmp/jolt/shim-stack.sh start",
+    "time": "2026-11-06T11:34:23",
+    "coverage": {
+      "servers": 1,
+      "edges": 1,
+      "fault_kinds": [
+        "delay",
+        "freeze",
+        "kill",
+        "starve"
+      ],
+      "edge_fault_pairs": 4,
+      "experiments": 4
+    },
+    "jolt": "0.1.0"
+  },
+  "graph": {
+    "processes": [
+      {
+        "pid": 56270870,
+        "name": "eventfd-mgr",
+        "path": "eventfd-mgr",
+        "threads": [
+          {
+            "pid": 56270870,
+            "tid": 1,
+            "name": "eventfd-mgr",
+            "state": "RECEIVE",
+            "blocked_on": "1",
+            "blocked_pid": null,
+            "priority": 10
+          }
+        ]
+      },
+      {
+        "pid": 56283159,
+        "name": "efd_worker",
+        "path": "efd_worker",
+        "threads": [
+          {
+            "pid": 56283159,
+            "tid": 1,
+            "name": "efd_worker",
+            "state": "NANOSLEEP",
+            "blocked_on": null,
+            "blocked_pid": null,
+            "priority": 10
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "client_pid": 56283159,
+        "server_pid": 56270870,
+        "via": "fd:/dev/eventfd",
+        "path": "/dev/eventfd"
+      }
+    ]
+  },
+  "verdicts": [
+    {
+      "fault": "delay+1500ms:eventfd-mgr",
+      "kind": "delay",
+      "server": "eventfd-mgr",
+      "client": "efd_worker",
+      "verdict": "slow-intolerant",
+      "longest_block_s": 4.16,
+      "recovery_s": 0.02,
+      "episodes": 2,
+      "fix": "Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on."
+    },
+    {
+      "fault": "kill:eventfd-mgr",
+      "kind": "kill",
+      "server": "eventfd-mgr",
+      "client": "efd_worker",
+      "verdict": "server-not-restarted",
+      "longest_block_s": 0.0,
+      "recovery_s": null,
+      "episodes": 0,
+      "fix": "Supervise the server (e.g. a watchdog or the System Launch and Monitor) so it is restarted after it dies."
+    },
+    {
+      "fault": "starve@p60:eventfd-mgr",
+      "kind": "starve",
+      "server": "eventfd-mgr",
+      "client": "efd_worker",
+      "verdict": "starved",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": "The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning."
+    },
+    {
+      "fault": "freeze:eventfd-mgr",
+      "kind": "freeze",
+      "server": "eventfd-mgr",
+      "client": "efd_worker",
+      "verdict": "hang-no-timeout",
+      "longest_block_s": 4.83,
+      "recovery_s": 0.02,
+      "episodes": 1,
+      "fix": "Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."
+    }
+  ],
+  "score": 0
+}

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jolt-qnx"
+version = "0.1.0"
+description = "Chaos engineering for QNX 8.0: map the message-passing graph, inject faults, score resilience"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+
+[project.scripts]
+jolt = "jolt.cli:main"
+
+[tool.setuptools]
+packages = ["jolt"]
+
+[tool.setuptools.package-data]
+jolt = ["dashboard.html"]

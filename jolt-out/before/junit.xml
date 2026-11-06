@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="jolt" tests="7" failures="6" skipped="0">
+  <testcase classname="imu" name="kill:imu -&gt; planner">
+    <failure message="server-not-restarted: Supervise the server (e.g. a watchdog or the System Launch and Monitor) so it is restarted after it dies."/>
+  </testcase>
+  <testcase classname="imu" name="delay+1500ms:imu -&gt; planner">
+    <failure message="slow-intolerant: Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on."/>
+  </testcase>
+  <testcase classname="imu" name="starve@p60:imu -&gt; planner">
+    <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
+  </testcase>
+  <testcase classname="actuator" name="starve@p60:actuator -&gt; planner">
+    <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
+  </testcase>
+  <testcase classname="actuator" name="kill:actuator -&gt; planner"/>
+  <testcase classname="imu" name="freeze:imu -&gt; planner">
+    <failure message="hang-no-timeout: Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."/>
+  </testcase>
+  <testcase classname="actuator" name="freeze:actuator -&gt; planner">
+    <failure message="hang-no-timeout: Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."/>
+  </testcase>
+</testsuite>

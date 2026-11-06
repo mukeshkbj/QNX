@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="jolt" tests="13" failures="0" skipped="2">
+  <testcase classname="imu" name="delay+1500ms:imu -&gt; planner"/>
+  <testcase classname="watchdog" name="freeze:watchdog -&gt; actuator">
+    <skipped message="client sent no request during the fault"/>
+  </testcase>
+  <testcase classname="watchdog" name="freeze:watchdog -&gt; imu">
+    <skipped message="client sent no request during the fault"/>
+  </testcase>
+  <testcase classname="watchdog" name="starve@p60:watchdog -&gt; actuator"/>
+  <testcase classname="watchdog" name="starve@p60:watchdog -&gt; imu"/>
+  <testcase classname="watchdog" name="kill:watchdog -&gt; actuator"/>
+  <testcase classname="watchdog" name="kill:watchdog -&gt; imu"/>
+  <testcase classname="imu" name="starve@p60:imu -&gt; planner"/>
+  <testcase classname="imu" name="kill:imu -&gt; planner"/>
+  <testcase classname="actuator" name="kill:actuator -&gt; planner"/>
+  <testcase classname="imu" name="freeze:imu -&gt; planner"/>
+  <testcase classname="actuator" name="freeze:actuator -&gt; planner"/>
+  <testcase classname="actuator" name="starve@p60:actuator -&gt; planner"/>
+</testsuite>
