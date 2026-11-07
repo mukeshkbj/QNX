@@ -12,9 +12,42 @@ Jolt connects to a running QNX 8.0 target and reads its live message-passing gra
 
 > Status: early development for the [QNX Global Hackathon](https://qnx.devpost.com/), Developer Tooling & Host Tools track.
 
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph host["Host: Linux / WSL2 + QNX SDP 8.0"]
+    cli["jolt CLI<br/>discover · plan · run"]
+    plan["Deterministic plan<br/>every server x fault, seeded"]
+    score["Verdicts + score<br/>report.md · junit.xml"]
+    dash["Live dashboard<br/>jolt serve"]
+    llm["jolt explain<br/>(LLM: explains only)"]
+  end
+  subgraph target["QNX 8.0 target: QEMU or Raspberry Pi 5"]
+    pidin["pidin<br/>threads · fds"]
+    watch["jolt_watch<br/>devctl DCMD_PROC_TIDSTATUS<br/>20 ms, priority 63"]
+    starve["jolt_starve<br/>SCHED_FIFO on every CPU"]
+    inter["jolt_interpose<br/>_RESMGR_FLAG_BEFORE proxy"]
+    sut["System under test<br/>servers + clients"]
+  end
+  cli -- ssh --> pidin --> cli
+  cli --> plan
+  plan -- "SIGKILL / SIGSTOP" --> sut
+  plan --> starve --> sut
+  plan --> inter -- "delay / error" --> sut
+  watch -- "SEND/REPLY/READY per client" --> cli
+  sut -. kernel thread states .-> watch
+  cli --> score --> dash
+  score --> llm
+```
+
+The LLM never picks faults or verdicts. Those come from the plan and the kernel measurements, so the same seed gives the same results.
+
 ## Quick start
 
-Requirements: a Linux host (Ubuntu 22.04, or WSL2 on Windows) with QNX SDP 8.0, plus a QNX 8.0 target reachable over SSH (a QEMU VM from `mkqnximage`, or a Raspberry Pi 5). [`setup/SETUP.md`](setup/SETUP.md) has the exact host and VM setup we used, including three SDP/WSL workarounds.
+Requirements: a Linux host (Ubuntu 22.04, or WSL2 on Windows) with QNX SDP 8.0, plus a QNX 8.0 target reachable over SSH (a QEMU VM from `mkqnximage`, or a Raspberry Pi 5). [`setup/SETUP.md`](setup/SETUP.md) has the exact host and VM setup we used, including three SDP/WSL workarounds. After a host restart, `bash setup/vm-ip.sh` finds the VM's new address and updates `ssh qnxvm`.
+
+**New to QNX message passing?** Start with the codelab [Why your QNX client hangs](docs/codelab.md).
 
 Recorded results from our runs are in [`jolt-out/`](jolt-out/): `report.md`, `junit.xml`, and `events.jsonl` for dashboard replay.
 
@@ -50,30 +83,48 @@ python3 -m jolt explain --run jolt-out/before --src target/demo-stack
 | --- | --- | --- |
 | `kill` | `SIGKILL` the server | Clients get an error, reconnect, and the server is restarted |
 | `freeze` | `SIGSTOP` for 5 s, then `SIGCONT` | No client stays blocked for the whole freeze |
-| `starve` | `jolt_starve`: one `SCHED_FIFO` spinning thread per CPU at priority 60 (`ThreadCtl(_NTO_TCTL_RUNMASK)`), started 300 ms after `jolt_watch`, which samples at priority 63 | No client is starved (runnable but not running) or blocked on its server for more than 1 s |
+| `starve` (one system-wide experiment) | `jolt_starve`: one `SCHED_FIFO` spinning thread per CPU at priority 60 (`ThreadCtl(_NTO_TCTL_RUNMASK)`), started 300 ms after `jolt_watch`, which samples at priority 63 | No client is starved (runnable but not running) or blocked on its server for more than 1 s |
 | `delay` | `jolt_interpose`: a proxy registered in front of the server's resource-manager path with `_RESMGR_FLAG_BEFORE`, holding each request 1.5 s | No client waits longer than 1 s per request |
+| `error` | `jolt_interpose -e 5`: every request through the path fails with `EIO` | Clients survive and recover once the path works again. Idle if the interposer failed no requests |
 
 Observation uses `jolt_watch`, which reads every client thread's kernel state every 20 ms with `devctl(DCMD_PROC_TIDSTATUS)`. It records SEND/REPLY blocking on the faulted server and READY-but-not-running starvation. Blocking episodes are therefore measured, not guessed from coarse samples.
 
 ## Results
 
-Demo stack (QEMU x86_64, QNX 8.0, seed 1). Each row adds the fix that Jolt's previous run pointed to:
+All runs are on QEMU x86_64, QNX 8.0, seed 1. Recorded outputs are in [`jolt-out/`](jolt-out/).
+
+**Demo stack.** Each round adds the fix that Jolt's previous run pointed to:
 
 | Run | Score | What Jolt reported |
 | --- | --- | --- |
-| `start` (before) | 14/100 | Freeze imu or actuator: planner hangs for the whole freeze (about 4.8 s). Delay 1.5 s: slow-intolerant. Starve: planner (priority 10) starved. Kill imu: not restarted |
-| + timeouts, heartbeat watchdog, supervision, planner at priority 61 | 64/100 | Under a priority-60 load, the servers' heartbeat threads and the watchdog are starved, so healthy servers would look hung. Nothing restarts the watchdog |
-| + heartbeat threads and watchdog at priority 62 | 82/100 | Kill watchdog: nothing supervises the supervisor |
-| + guard loop for the watchdog (`start-fixed`) | **100/100** | 18 of 18 exercised checks pass (2 idle) |
+| `start` (before) | 29/100 | Freeze imu or actuator: planner hangs for the whole freeze (4.8 s). Delay 1.5 s: slow-intolerant (1.49 s per read). System-wide starve: planner (priority 10) starved. Kill imu: not restarted. Planner does survive EIO errors |
+| + timeouts, heartbeat watchdog, supervision, planner at priority 61 | 64/100\* | Under a priority-60 load, the servers' heartbeat threads and the watchdog are starved, so healthy servers would look hung. Nothing restarts the watchdog |
+| + heartbeat threads and watchdog at priority 62 | 82/100\* | Kill watchdog: nothing supervises the supervisor |
+| + guard loop for the watchdog (`start-fixed`) | **100/100** | Every exercised check passes. Freezes recover in about 0.8 s, delay costs 0.48 s per request, EIO is survived |
 
-Code we didn't write:
+\* Intermediate rounds were scored before starve became a single system-wide experiment and `error` was added, so their scores aren't directly comparable.
+
+**Code we didn't write:**
 
 | Target | Score | Findings |
 | --- | --- | --- |
-| [QNX `shim-demo`](https://gitlab.com/qnx/projects/shim-demo) (`eventfd-mgr` + `libeventfd` shim, built unchanged), driven by a Linux-style harness client (`thirdparty/shim-demo/efd_worker.c`, ours) | 0/100 | Delay 1.5 s: client blocked 4.2 s (write and read both delayed). Freeze: hang for the whole freeze. Starve: client starved at default priority. Kill: `eventfd-mgr` not restarted. Expected for a proof-of-concept port; ported Linux code inherits blocking semantics |
-| QNX system services on the QEMU image (`slogger2`, `random`; freeze + starve only) | 77/100 | Freeze: every client idle; slog2 logging is shared-memory based and `/dev/random` is read rarely, so nobody blocks. Starve at priority 60: `io-sock` (network) and `devb-eide` (disk) are starved; on this image they run below 60. That's a system priority-design fact, not a QNX bug |
+| [QNX `shim-demo`](https://gitlab.com/qnx/projects/shim-demo) (`eventfd-mgr` + `libeventfd` shim, built unchanged), driven by a Linux-style harness client ([`thirdparty/shim-demo/efd_worker.c`](thirdparty/shim-demo/efd_worker.c), ours) | 0/100 | See below |
+| QNX system services on the QEMU image (`slogger2`, `random`; freeze + system-wide starve only) | 85/100 | Freezes: every client idle; slog2 logging is shared-memory based and `/dev/random` is read rarely, so nobody blocks. Starve at priority 60: `io-sock` (network) and `devb-eide` (disk) are starved; on this image they run below 60. That's a system priority-design fact, not a QNX bug |
 
-**idle** means a client sent the faulted server no request during a freeze or delay. That check wasn't exercised, so it's excluded from the score rather than counted as a pass.
+`shim-demo` findings:
+
+- **Error (EIO on `/dev/eventfd`): `lost-stdio`.** This is a real bug that Jolt surfaced.
+  - When the shim's initial `write()` fails, `eventfd()` returns `EXIT_FAILURE` (1) instead of -1.
+  - The client then uses **its own stdout** as the eventfd. Its 8-byte counter appears in its log as `001 \0 \0 …`.
+  - On the next error, the client `close()`s it, so fd 1 disappears from `pidin fds`.
+- **Delay:** blocked 4.1 s, because write and read are both delayed.
+- **Freeze:** hangs for the whole freeze.
+- **Starve:** starved at default priority.
+- **Kill:** `eventfd-mgr` is not restarted.
+
+Reading the source also shows that all clients share one counter, and that a blocking `read()` never blocks. Those are code-review notes, not Jolt findings. The sample's README calls it a proof of concept.
+
+**idle** means a client sent the faulted server no request during a freeze, delay or error fault. That check wasn't exercised, so it's excluded from the score rather than counted as a pass.
 
 ## Three things Jolt teaches about QNX
 

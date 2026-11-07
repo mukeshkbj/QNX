@@ -7,10 +7,11 @@ from .runner import ExperimentResult, STUCK_AFTER
 EXPECTATIONS = {
     "kill":   "Clients get an error, reconnect, and the server is restarted.",
     "freeze": "No client waits longer than its timeout; nobody blocks for the whole freeze.",
-    "starve": "With every CPU busy at priority 60, no client is starved or blocked on its server for "
+    "starve": "(One system-wide experiment.) With every CPU busy at priority 60, no client is starved or blocked on a server for "
               "more than 1 s. Clients above the load keep running, and QNX priority inheritance "
               "lets their servers run at the client's priority.",
     "delay":  "Against a slow (but alive) server, no client waits longer than 1 s per request.",
+    "error":  "When every request fails with EIO, clients survive and recover once the path works again.",
 }
 
 FIX_HINTS = {
@@ -18,6 +19,9 @@ FIX_HINTS = {
                        "before MsgSend and handle ETIMEDOUT.",
     "server-not-restarted": "Supervise the server (e.g. a watchdog or the System Launch and "
                             "Monitor) so it is restarted after it dies.",
+    "lost-stdio": "The client lost a standard stream (fd 0-2) while handling the fault: some error "
+                  "path returned or closed the wrong descriptor. Check every fd-returning "
+                  "function returns -1 (not EXIT_FAILURE) on error.",
     "client-crashed": "Handle MsgSend errors (ESRCH/EBADF) by reconnecting instead of exiting.",
     "not-recovered": "The system did not return to a healthy state within the recovery window.",
     "slow-intolerant": "Arm TimerTimeout before each request to a server that can be slow; a live "
@@ -39,11 +43,13 @@ def judge(r: ExperimentResult) -> list[dict]:
     for c in r.clients:
         if not c.survived:
             v = "client-crashed"
+        elif getattr(c, "lost_stdio", None):
+            v = "lost-stdio"      # e.g. a library returned a standard stream as a resource fd
         elif kind == "starve" and c.ready_s > 1.0:
             v = "starved"         # the client itself could not get the CPU
         elif kind == "starve" and c.longest_block_s > 1.0:
             v = "priority-inversion"   # client blocked on a server that the load starved
-        elif kind in ("freeze", "delay") and c.episodes == 0:
+        elif kind in ("freeze", "delay", "error") and c.episodes == 0:
             v = "idle"            # never sent the server a request during the fault: not exercised
         elif kind == "freeze" and c.longest_block_s >= max(dur - 1.0, STUCK_AFTER):
             v = "hang-no-timeout"

@@ -138,7 +138,8 @@ def main(argv: list[str] | None = None) -> int:
         if a.reset:
             t.run(a.reset, timeout=60)
             wait_for(t, watched)
-        clients = baseline.get(f.server, [])
+        clients = (sorted({c for cs in baseline.values() for c in cs}) if f.server == "*"
+                   else baseline.get(f.server, []))
         print(f"[{i}/{len(plan)}] {f.id}  clients={clients}")
         emit("inject", n=i, total=len(plan), fault=f.to_dict(), clients=clients)
         r = run_experiment(t, f, watched, clients, reset=a.reset)

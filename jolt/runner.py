@@ -22,6 +22,7 @@ class ClientResult:
     verdict: str = ""               # pass/fail label, filled by score.py
     episodes: int = -1              # blocking episodes seen by jolt_watch (-1 = not measured)
     ready_s: float = 0.0            # longest stretch runnable-but-not-running (CPU starvation)
+    lost_stdio: list = field(default_factory=list)   # standard fds (0-2) closed during the fault
 
 
 @dataclass
@@ -47,6 +48,17 @@ def _by_name(procs) -> dict[str, int]:
     return {p.short_name: pid for pid, p in procs.items()}
 
 
+def std_fds(t: Target, pid: int) -> set[int]:
+    """Which of the standard streams (fd 0, 1, 2) a process has open, from `pidin fds`."""
+    out = t.run(f"pidin -p {pid} fds")
+    fds = set()
+    for line in out.splitlines():
+        tok = line.split()
+        if len(tok) >= 2 and tok[0] in ("0", "1", "2") and tok[1].isdigit():
+            fds.add(int(tok[0]))
+    return fds
+
+
 def wait_for(t: Target, names: list[str], timeout: float = 15.0) -> bool:
     """Wait until every named process is running (after a reset)."""
     end = time.monotonic() + timeout
@@ -62,9 +74,14 @@ def run_experiment(t: Target, fault: Fault, watched: list[str], clients: list[st
                    log: Callable[[str], None] = print, reset: str | None = None) -> ExperimentResult:
     procs = _snapshot(t)
     names = _by_name(procs)
-    spid = names.get(fault.server)
+    spid = 0 if fault.server == "*" else names.get(fault.server)   # "*": system-wide (starve)
     res = ExperimentResult(fault.to_dict(), spid, None, False, False, None)
     starve_prefix = ""
+    n_err = -1
+    # standard streams each client has open before the fault (by name: clients restart on reset)
+    base_std = {c: std_fds(t, names[c]) for c in clients if c in names} \
+        if fault.kind in ("error", "delay") else {}
+    lost_std: dict[str, list[int]] = {}
     if spid is None:
         res.notes.append(f"server {fault.server} not running; skipped")
         return res
@@ -86,13 +103,14 @@ def run_experiment(t: Target, fault: Fault, watched: list[str], clients: list[st
         starve_prefix = (f"nohup {t.remote_dir}/jolt_starve -p {fault.priority} -t {fault.duration} "
                          f"-c -1 -w 300 >/dev/null 2>&1 & ")
         res.notes.append(f"starve: all CPUs at priority {fault.priority}")
-    elif fault.kind == "delay":
+    elif fault.kind in ("delay", "error"):
         if not reset:
-            res.notes.append("delay needs --reset so clients reconnect through the interposer; skipped")
+            res.notes.append(f"{fault.kind} needs --reset so clients reconnect through the interposer; skipped")
             res.server_pid_before = None
             return res
+        mode = f"-d {fault.delay_ms}" if fault.kind == "delay" else f"-e {fault.errno}"
         t.run(f"{t.remote_dir}/jolt_interpose -p {fault.path} -u {fault.server} "
-              f"-d {fault.delay_ms} > {t.remote_dir}/interpose.log 2>&1 &")
+              f"{mode} > {t.remote_dir}/interpose.log 2>&1 &")
         time.sleep(1.0)
         t.run(reset, timeout=60)                       # clients reconnect -> through the interposer
         wait_for(t, watched)
@@ -139,10 +157,22 @@ def run_experiment(t: Target, fault: Fault, watched: list[str], clients: list[st
     # --- undo ---------------------------------------------------------------
     if fault.kind == "freeze":
         t.signal(spid, "CONT")                        # normally already resumed by the target
-    elif fault.kind == "delay":
+    elif fault.kind in ("delay", "error"):
+        # before removing the interposer: did a client lose a standard stream (e.g. a library
+        # handed it fd 1 as a resource and it later close()d it)?
+        for c, before in base_std.items():
+            pid_now = _by_name(_snapshot(t)).get(c)
+            if pid_now:
+                missing = sorted(before - std_fds(t, pid_now))
+                if missing:
+                    lost_std[c] = missing
+                    res.notes.append(f"{c} lost standard stream(s) {missing} during the fault")
         t.run("slay -s TERM -f jolt_interpose")
         time.sleep(0.5)
-        res.notes.append(t.run(f"tail -1 {t.remote_dir}/interpose.log").strip())
+        summary = t.run(f"tail -1 {t.remote_dir}/interpose.log").strip()
+        res.notes.append(summary)
+        m = __import__("re").search(r"errors (\d+)", summary)
+        n_err = int(m.group(1)) if m else -1
         if reset:
             t.run(reset, timeout=60)                   # reconnect directly to the real server
             wait_for(t, watched)
@@ -169,9 +199,12 @@ def run_experiment(t: Target, fault: Fault, watched: list[str], clients: list[st
     res.server_pid_after = names.get(fault.server)
     res.server_restarted = fault.kind == "kill" and res.server_pid_after not in (None, spid)
     for c in clients:
+        # error fault: "exercised" = the interposer actually failed requests (its own count)
+        ep = n_err if fault.kind == "error" else episodes.get(c, -1)
         res.clients.append(ClientResult(c, round(longest.get(c, 0.0), 2), c in names,
-                                        episodes=episodes.get(c, -1),
-                                        ready_s=round(ready.get(c, 0.0), 2)))
+                                        episodes=ep,
+                                        ready_s=round(ready.get(c, 0.0), 2),
+                                        lost_stdio=lost_std.get(c, [])))
     return res
 
 

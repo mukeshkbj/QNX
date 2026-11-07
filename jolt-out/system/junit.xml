@@ -1,30 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="jolt" tests="26" failures="3" skipped="13">
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; devb-eide">
-    <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
-  </testcase>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; devc-pty"/>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; dhcpcd"/>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; dumper"/>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; fsevmgr"/>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; io-sock">
-    <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
-  </testcase>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; io-usb-otg"/>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; pci-server"/>
-  <testcase classname="slogger2" name="starve@p60:slogger2 -&gt; random"/>
-  <testcase classname="random" name="freeze:random -&gt; dhcpcd">
-    <skipped message="client sent no request during the fault"/>
-  </testcase>
-  <testcase classname="random" name="freeze:random -&gt; io-sock">
-    <skipped message="client sent no request during the fault"/>
-  </testcase>
-  <testcase classname="random" name="freeze:random -&gt; sshd">
-    <skipped message="client sent no request during the fault"/>
-  </testcase>
-  <testcase classname="random" name="freeze:random -&gt; sshd-session">
-    <skipped message="client sent no request during the fault"/>
-  </testcase>
+<testsuite name="jolt" tests="26" failures="2" skipped="13">
   <testcase classname="slogger2" name="freeze:slogger2 -&gt; devb-eide">
     <skipped message="client sent no request during the fault"/>
   </testcase>
@@ -52,10 +27,33 @@
   <testcase classname="slogger2" name="freeze:slogger2 -&gt; random">
     <skipped message="client sent no request during the fault"/>
   </testcase>
-  <testcase classname="random" name="starve@p60:random -&gt; dhcpcd"/>
-  <testcase classname="random" name="starve@p60:random -&gt; io-sock">
+  <testcase classname="*" name="starve@p60:all -&gt; devb-eide">
     <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
   </testcase>
-  <testcase classname="random" name="starve@p60:random -&gt; sshd"/>
-  <testcase classname="random" name="starve@p60:random -&gt; sshd-session"/>
+  <testcase classname="*" name="starve@p60:all -&gt; devc-pty"/>
+  <testcase classname="*" name="starve@p60:all -&gt; dhcpcd"/>
+  <testcase classname="*" name="starve@p60:all -&gt; dumper"/>
+  <testcase classname="*" name="starve@p60:all -&gt; fsevmgr"/>
+  <testcase classname="*" name="starve@p60:all -&gt; io-sock">
+    <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
+  </testcase>
+  <testcase classname="*" name="starve@p60:all -&gt; io-usb-otg"/>
+  <testcase classname="*" name="starve@p60:all -&gt; ksh"/>
+  <testcase classname="*" name="starve@p60:all -&gt; pci-server"/>
+  <testcase classname="*" name="starve@p60:all -&gt; qconn"/>
+  <testcase classname="*" name="starve@p60:all -&gt; random"/>
+  <testcase classname="*" name="starve@p60:all -&gt; sshd"/>
+  <testcase classname="*" name="starve@p60:all -&gt; sshd-session"/>
+  <testcase classname="random" name="freeze:random -&gt; dhcpcd">
+    <skipped message="client sent no request during the fault"/>
+  </testcase>
+  <testcase classname="random" name="freeze:random -&gt; io-sock">
+    <skipped message="client sent no request during the fault"/>
+  </testcase>
+  <testcase classname="random" name="freeze:random -&gt; sshd">
+    <skipped message="client sent no request during the fault"/>
+  </testcase>
+  <testcase classname="random" name="freeze:random -&gt; sshd-session">
+    <skipped message="client sent no request during the fault"/>
+  </testcase>
 </testsuite>

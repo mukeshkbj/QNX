@@ -28,13 +28,36 @@ def test_plan_is_deterministic():
     g = build_graph(T, F)
     a = [f.id for f in make_plan(g, seed=7)]
     assert a == [f.id for f in make_plan(g, seed=7)]
-    assert len(a) == 6 and coverage(g, make_plan(g))["edge_fault_pairs"] == 6
+    # 2 servers x (kill, freeze) + ONE system-wide starve; no rm paths in the fixture -> no delay/error
+    assert len(a) == 5 and sum(i.startswith("starve") for i in a) == 1
+    assert "starve@p60:all" in a
+
+
+def test_path_faults_need_a_resource_manager_path():
+    t = (FX / "threads_qemu_stack.txt").read_text()
+    f = (FX / "fds_qemu_stack.txt").read_text()
+    g = build_graph(t, f).subgraph(["imu", "planner", "actuator", "watchdog"])
+    ids = [x.id for x in make_plan(g)]
+    # in this capture imu was still a name_attach server: names can't be interposed
+    assert not any(i.startswith(("delay", "error")) for i in ids)
 
 
 def _res(kind, block, restarted=True, recovered=True, alive=True, episodes=-1):
     return ExperimentResult({"kind": kind, "id": f"{kind}:imu", "server": "imu", "duration": 5.0},
                             4100, 4200 if restarted else 4100, restarted, recovered, 0.5,
                             [ClientResult("planner", block, alive, episodes=episodes)])
+
+
+def test_error_fault_idle_without_injected_errors():
+    assert judge(_res("error", 0.0, episodes=0))[0]["verdict"] == "idle"
+    assert judge(_res("error", 0.0, episodes=12))[0]["verdict"] == "pass"
+    assert judge(_res("error", 0.0, episodes=12, alive=False))[0]["verdict"] == "client-crashed"
+
+
+def test_lost_stdio_is_a_failure():
+    r = _res("error", 0.0, episodes=11)
+    r.clients[0].lost_stdio = [1]
+    assert judge(r)[0]["verdict"] == "lost-stdio"
 
 
 def test_idle_clients_do_not_count():

@@ -1,159 +1,13 @@
 [
   {
     "fault": {
-      "kind": "starve",
-      "server": "slogger2",
-      "duration": 4.0,
-      "priority": 60,
-      "delay_ms": 0,
-      "path": "",
-      "id": "starve@p60:slogger2"
-    },
-    "server_pid_before": 16387,
-    "server_pid_after": 16387,
-    "server_restarted": false,
-    "recovered": true,
-    "recovery_s": 0.02,
-    "clients": [
-      {
-        "client": "devb-eide",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "starved",
-        "episodes": 0,
-        "ready_s": 3.42
-      },
-      {
-        "client": "devc-pty",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "dhcpcd",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "dumper",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "fsevmgr",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "io-sock",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "starved",
-        "episodes": 0,
-        "ready_s": 3.67
-      },
-      {
-        "client": "io-usb-otg",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "pci-server",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "random",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "pass",
-        "episodes": 0,
-        "ready_s": 0.0
-      }
-    ],
-    "notes": [
-      "starve: all CPUs at priority 60",
-      "watch: server 16387 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'pci-server': 28676, 'random': 131081} -> client 65544 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 3423 | client 155659 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 3675 | client 282643 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0"
-    ]
-  },
-  {
-    "fault": {
-      "kind": "freeze",
-      "server": "random",
-      "duration": 4.0,
-      "priority": 0,
-      "delay_ms": 0,
-      "path": "",
-      "id": "freeze:random"
-    },
-    "server_pid_before": 131081,
-    "server_pid_after": 131081,
-    "server_restarted": false,
-    "recovered": true,
-    "recovery_s": 0.02,
-    "clients": [
-      {
-        "client": "dhcpcd",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "idle",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "io-sock",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "idle",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "sshd",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "idle",
-        "episodes": 0,
-        "ready_s": 0.0
-      },
-      {
-        "client": "sshd-session",
-        "longest_block_s": 0.0,
-        "survived": true,
-        "verdict": "idle",
-        "episodes": 0,
-        "ready_s": 0.0
-      }
-    ],
-    "notes": [
-      "watch: server 131081 clients {'dhcpcd': 225297, 'io-sock': 163853, 'sshd': 249870, 'sshd-session': 35377170} -> client 225297 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 249870 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 35377170 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0"
-    ]
-  },
-  {
-    "fault": {
       "kind": "freeze",
       "server": "slogger2",
       "duration": 4.0,
       "priority": 0,
       "delay_ms": 0,
       "path": "",
+      "errno": 5,
       "id": "freeze:slogger2"
     },
     "server_pid_before": 16387,
@@ -168,7 +22,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "devc-pty",
@@ -176,7 +31,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "dhcpcd",
@@ -184,7 +40,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "dumper",
@@ -192,7 +49,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "fsevmgr",
@@ -200,7 +58,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "io-sock",
@@ -208,7 +67,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "io-usb-otg",
@@ -216,7 +76,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "pci-server",
@@ -224,7 +85,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "random",
@@ -232,36 +94,75 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 16387 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'pci-server': 28676, 'random': 131081} -> client 65544 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 155659 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 282643 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 180 alive 1 ready_ms 0"
+      "watch: server 16387 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'pci-server': 28676, 'random': 131081} -> client 65544 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 155659 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 282643 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0"
     ]
   },
   {
     "fault": {
       "kind": "starve",
-      "server": "random",
+      "server": "*",
       "duration": 4.0,
       "priority": 60,
       "delay_ms": 0,
       "path": "",
-      "id": "starve@p60:random"
+      "errno": 5,
+      "id": "starve@p60:all"
     },
-    "server_pid_before": 131081,
-    "server_pid_after": 131081,
+    "server_pid_before": 0,
+    "server_pid_after": null,
     "server_restarted": false,
     "recovered": true,
-    "recovery_s": 0.1,
+    "recovery_s": 0.02,
     "clients": [
+      {
+        "client": "devb-eide",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "starved",
+        "episodes": 0,
+        "ready_s": 3.63,
+        "lost_stdio": []
+      },
+      {
+        "client": "devc-pty",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
       {
         "client": "dhcpcd",
         "longest_block_s": 0.0,
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "dumper",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "fsevmgr",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "io-sock",
@@ -269,7 +170,53 @@
         "survived": true,
         "verdict": "starved",
         "episodes": 0,
-        "ready_s": 3.61
+        "ready_s": 3.65,
+        "lost_stdio": []
+      },
+      {
+        "client": "io-usb-otg",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "ksh",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "pci-server",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "qconn",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "random",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "pass",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "sshd",
@@ -277,7 +224,8 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "sshd-session",
@@ -285,12 +233,71 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
       "starve: all CPUs at priority 60",
-      "watch: server 131081 clients {'dhcpcd': 225297, 'io-sock': 163853, 'sshd': 249870, 'sshd-session': 35377170} -> client 225297 longest_ms 0 episodes 0 samples 191 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 191 alive 1 ready_ms 3612 | client 249870 longest_ms 0 episodes 0 samples 191 alive 1 ready_ms 0 | client 35377170 longest_ms 0 episodes 0 samples 191 alive 1 ready_ms 0"
+      "watch: server 0 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'ksh': 57351, 'pci-server': 28676, 'qconn': 253967, 'random': 131081, 'sshd': 249870, 'sshd-session': 757778} -> client 65544 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 3633 | client 155659 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 3654 | client 282643 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 57351 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 253967 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 249870 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 757778 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0"
+    ]
+  },
+  {
+    "fault": {
+      "kind": "freeze",
+      "server": "random",
+      "duration": 4.0,
+      "priority": 0,
+      "delay_ms": 0,
+      "path": "",
+      "errno": 5,
+      "id": "freeze:random"
+    },
+    "server_pid_before": 131081,
+    "server_pid_after": 131081,
+    "server_restarted": false,
+    "recovered": true,
+    "recovery_s": 0.02,
+    "clients": [
+      {
+        "client": "dhcpcd",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "idle",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "io-sock",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "idle",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "sshd",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "idle",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      },
+      {
+        "client": "sshd-session",
+        "longest_block_s": 0.0,
+        "survived": true,
+        "verdict": "idle",
+        "episodes": 0,
+        "ready_s": 0.0,
+        "lost_stdio": []
+      }
+    ],
+    "notes": [
+      "watch: server 131081 clients {'dhcpcd': 225297, 'io-sock': 163853, 'sshd': 249870, 'sshd-session': 757778} -> client 225297 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0 | client 249870 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0 | client 757778 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0"
     ]
   }
 ]

@@ -11,7 +11,8 @@ import random
 from .faults import Fault
 from .model import Graph
 
-DEFAULT_KINDS = ("kill", "freeze", "starve", "delay")
+DEFAULT_KINDS = ("kill", "freeze", "starve", "delay", "error")
+PATH_KINDS = ("delay", "error")      # need a resource-manager path to interpose
 
 
 def make_plan(g: Graph, kinds=DEFAULT_KINDS, seed: int = 1, duration: float = 5.0,
@@ -29,21 +30,24 @@ def make_plan(g: Graph, kinds=DEFAULT_KINDS, seed: int = 1, duration: float = 5.
     plan = []
     for s in servers:
         for k in kinds:
-            if k == "delay" and s not in rm_path:
+            if k == "starve":
+                continue                                   # system-wide, added once below
+            if k in PATH_KINDS and s not in rm_path:
                 continue
             plan.append(Fault(kind=k, server=s, duration=duration,
-                              priority=starve_priority if k == "starve" else 0,
                               delay_ms=delay_ms if k == "delay" else 0,
-                              path=rm_path.get(s, "") if k == "delay" else ""))
+                              path=rm_path.get(s, "") if k in PATH_KINDS else ""))
+    if "starve" in kinds and servers:
+        plan.append(Fault(kind="starve", server="*", duration=duration, priority=starve_priority))
     random.Random(seed).shuffle(plan)
     return plan
 
 
 def coverage(g: Graph, plan: list[Fault]) -> dict:
     """How many (client -> server edge, fault kind) pairs the plan exercises."""
-    names = {f.server for f in plan}
+    names = {f.server for f in plan if f.server != "*"}
     kinds = sorted({f.kind for f in plan})
     edges = [e for e in g.edges if g.name(e.server_pid) in names]
-    pairs = sum(1 for f in plan for e in g.edges if g.name(e.server_pid) == f.server)
+    pairs = sum(1 for f in plan for e in g.edges if f.server in ("*", g.name(e.server_pid)))
     return {"servers": len(names), "edges": len(edges), "fault_kinds": kinds,
             "edge_fault_pairs": pairs, "experiments": len(plan)}

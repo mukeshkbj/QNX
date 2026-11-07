@@ -2,6 +2,7 @@
  * jolt_watch.c - high-rate observer for Jolt experiments (run as root on the target).
  *
  *   jolt_watch -d 5 -i 20 -s <server_pid> <client_pid> [<client_pid> ...]
+ *   jolt_watch -d 5 -i 20 -s 0 <client_pid> ...        blocking on ANY server (system-wide faults)
  *
  * Every <interval> ms, reads every thread of each client straight from the
  * kernel (devctl DCMD_PROC_TIDSTATUS on /proc/<pid>/ctl) and records whether
@@ -62,8 +63,9 @@ static int blocked_on(pid_t pid, pid_t server, int *starved)
     memset(&st, 0, sizeof(st));
     st.tid = 1;
     while (devctl(fd, DCMD_PROC_TIDSTATUS, &st, sizeof(st), NULL) == EOK) {
-        if ((st.state == STATE_SEND || st.state == STATE_REPLY) && st.blocked.connect.pid == server)
-            blocked = 1;
+        if ((st.state == STATE_SEND || st.state == STATE_REPLY) &&
+            (server == 0 ? st.blocked.connect.pid != 1 : st.blocked.connect.pid == server))
+            blocked = 1;          /* server 0 = any server except procnto */
         if (st.state == STATE_READY) ready = 1;
         if (st.state == STATE_RUNNING) running = 1;
         st.tid++;
@@ -86,7 +88,7 @@ int main(int argc, char **argv)
     int n = 0;
     pid_t cl[MAXC];
     for (int i = optind; i < argc && n < MAXC; i++) cl[n++] = atoi(argv[i]);
-    if (!server || !n) {
+    if (server < 0 || !n) {
         fprintf(stderr, "usage: jolt_watch -d secs -i ms -s server_pid client_pid...\n");
         return 2;
     }
@@ -96,10 +98,10 @@ int main(int argc, char **argv)
     pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp);
 
     double start[MAXC], longest[MAXC], rstart[MAXC], rlongest[MAXC];
-    int episodes[MAXC], alive[MAXC], in_block[MAXC], in_ready[MAXC];
+    int episodes[MAXC], alive[MAXC], in_block[MAXC], in_ready[MAXC], pre[MAXC];
     for (int i = 0; i < n; i++) {
         start[i] = longest[i] = rstart[i] = rlongest[i] = 0;
-        episodes[i] = 0; alive[i] = 1; in_block[i] = in_ready[i] = 0;
+        episodes[i] = 0; alive[i] = 1; in_block[i] = in_ready[i] = pre[i] = 0;
     }
 
     struct timespec iv = { interval_ms / 1000, (interval_ms % 1000) * 1000000L };
@@ -114,6 +116,10 @@ int main(int argc, char **argv)
             if (starved && !in_ready[i]) { in_ready[i] = 1; rstart[i] = t; }
             if (!starved) in_ready[i] = 0;
             if (in_ready[i] && t - rstart[i] > rlongest[i]) rlongest[i] = t - rstart[i];
+            /* system-wide mode (-s 0): a block already in progress at the first sample
+               (e.g. a shell waiting for console input) was not caused by the fault */
+            if (server == 0 && samples == 0 && b) pre[i] = 1;
+            if (pre[i]) { if (!b) pre[i] = 0; continue; }
             if (b && !in_block[i]) { in_block[i] = 1; start[i] = t; episodes[i]++; }
             if (!b) in_block[i] = 0;
             if (in_block[i] && t - start[i] > longest[i]) longest[i] = t - start[i];

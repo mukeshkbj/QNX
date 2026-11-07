@@ -3,17 +3,18 @@
     "target": "qnxvm",
     "seed": 1,
     "reset": "sh /tmp/jolt/stack.sh start",
-    "time": "2026-11-06T11:30:54",
+    "time": "2026-11-07T21:29:26",
     "coverage": {
       "servers": 2,
       "edges": 2,
       "fault_kinds": [
         "delay",
+        "error",
         "freeze",
         "kill",
         "starve"
       ],
-      "edge_fault_pairs": 7,
+      "edge_fault_pairs": 8,
       "experiments": 7
     },
     "jolt": "0.1.0"
@@ -21,12 +22,12 @@
   "graph": {
     "processes": [
       {
-        "pid": 49295382,
+        "pid": 823318,
         "name": "imu",
         "path": "imu",
         "threads": [
           {
-            "pid": 49295382,
+            "pid": 823318,
             "tid": 1,
             "name": "imu",
             "state": "SIGWAITINFO",
@@ -35,7 +36,7 @@
             "priority": 10
           },
           {
-            "pid": 49295382,
+            "pid": 823318,
             "tid": 2,
             "name": "imu",
             "state": "RECEIVE",
@@ -46,12 +47,12 @@
         ]
       },
       {
-        "pid": 49295383,
+        "pid": 823319,
         "name": "actuator",
         "path": "actuator",
         "threads": [
           {
-            "pid": 49295383,
+            "pid": 823319,
             "tid": 1,
             "name": "actuator",
             "state": "SIGWAITINFO",
@@ -60,7 +61,7 @@
             "priority": 10
           },
           {
-            "pid": 49295383,
+            "pid": 823319,
             "tid": 2,
             "name": "actuator",
             "state": "RECEIVE",
@@ -71,12 +72,12 @@
         ]
       },
       {
-        "pid": 49311768,
+        "pid": 839704,
         "name": "planner",
         "path": "planner",
         "threads": [
           {
-            "pid": 49311768,
+            "pid": 839704,
             "tid": 1,
             "name": "planner",
             "state": "NANOSLEEP",
@@ -87,12 +88,12 @@
         ]
       },
       {
-        "pid": 49311769,
+        "pid": 839705,
         "name": "watchdog",
         "path": "watchdog",
         "threads": [
           {
-            "pid": 49311769,
+            "pid": 839705,
             "tid": 1,
             "name": "watchdog",
             "state": "NANOSLEEP",
@@ -105,20 +106,53 @@
     ],
     "edges": [
       {
-        "client_pid": 49311768,
-        "server_pid": 49295382,
+        "client_pid": 839704,
+        "server_pid": 823318,
         "via": "fd:/dev/imu",
         "path": "/dev/imu"
       },
       {
-        "client_pid": 49311768,
-        "server_pid": 49295383,
+        "client_pid": 839704,
+        "server_pid": 823319,
         "via": "coid",
         "path": null
       }
     ]
   },
   "verdicts": [
+    {
+      "fault": "freeze:imu",
+      "kind": "freeze",
+      "server": "imu",
+      "client": "planner",
+      "verdict": "hang-no-timeout",
+      "longest_block_s": 4.83,
+      "recovery_s": 0.02,
+      "episodes": 1,
+      "fix": "Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."
+    },
+    {
+      "fault": "starve@p60:all",
+      "kind": "starve",
+      "server": "*",
+      "client": "planner",
+      "verdict": "starved",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 0,
+      "fix": "The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning."
+    },
+    {
+      "fault": "error=errno5:imu",
+      "kind": "error",
+      "server": "imu",
+      "client": "planner",
+      "verdict": "pass",
+      "longest_block_s": 0.0,
+      "recovery_s": 0.02,
+      "episodes": 36,
+      "fix": null
+    },
     {
       "fault": "kill:imu",
       "kind": "kill",
@@ -129,39 +163,6 @@
       "recovery_s": null,
       "episodes": 0,
       "fix": "Supervise the server (e.g. a watchdog or the System Launch and Monitor) so it is restarted after it dies."
-    },
-    {
-      "fault": "delay+1500ms:imu",
-      "kind": "delay",
-      "server": "imu",
-      "client": "planner",
-      "verdict": "slow-intolerant",
-      "longest_block_s": 1.49,
-      "recovery_s": 0.02,
-      "episodes": 4,
-      "fix": "Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on."
-    },
-    {
-      "fault": "starve@p60:imu",
-      "kind": "starve",
-      "server": "imu",
-      "client": "planner",
-      "verdict": "starved",
-      "longest_block_s": 0.0,
-      "recovery_s": 0.16,
-      "episodes": 0,
-      "fix": "The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning."
-    },
-    {
-      "fault": "starve@p60:actuator",
-      "kind": "starve",
-      "server": "actuator",
-      "client": "planner",
-      "verdict": "starved",
-      "longest_block_s": 0.0,
-      "recovery_s": 0.02,
-      "episodes": 0,
-      "fix": "The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning."
     },
     {
       "fault": "kill:actuator",
@@ -175,15 +176,15 @@
       "fix": null
     },
     {
-      "fault": "freeze:imu",
-      "kind": "freeze",
+      "fault": "delay+1500ms:imu",
+      "kind": "delay",
       "server": "imu",
       "client": "planner",
-      "verdict": "hang-no-timeout",
-      "longest_block_s": 4.83,
+      "verdict": "slow-intolerant",
+      "longest_block_s": 1.49,
       "recovery_s": 0.02,
-      "episodes": 1,
-      "fix": "Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."
+      "episodes": 4,
+      "fix": "Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on."
     },
     {
       "fault": "freeze:actuator",
@@ -197,5 +198,5 @@
       "fix": "Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."
     }
   ],
-  "score": 14
+  "score": 29
 }

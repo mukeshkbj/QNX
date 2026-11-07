@@ -7,8 +7,9 @@ returns to its starting state between experiments.
           Tests: do clients handle the error, and does anything restart the server?
   freeze  SIGSTOP for `duration` s, then SIGCONT. Nothing unblocks clients.
           Tests: does every client use a timeout (TimerTimeout) on MsgSend?
-  starve  Run jolt_starve at a priority above the server, pinned to its CPU, for
-          `duration` s. Tests: priority design and deadline handling.
+  starve  ONE system-wide experiment: jolt_starve spins on every CPU at `priority`
+          for `duration` s. Tests: are critical clients above background load, and do
+          their servers (via priority inheritance) keep serving them?
   delay   jolt_interpose registers in front of the server's resource-manager path
           (_RESMGR_FLAG_BEFORE) and holds each request `delay_ms`. Needs --reset so
           clients reconnect through it. Tests: do clients time out against a slow
@@ -26,15 +27,17 @@ class Fault:
     duration: float = 5.0        # seconds the fault is held (freeze/starve/delay)
     priority: int = 0            # starve: priority of the hog thread
     delay_ms: int = 0            # delay: added reply latency
-    path: str = ""               # delay: the resource-manager path to interpose (e.g. /dev/imu)
+    path: str = ""               # delay/error: the resource-manager path to interpose (e.g. /dev/imu)
+    errno: int = 5               # error: errno returned to every request (5 = EIO)
 
     @property
     def id(self) -> str:
-        extra = {"starve": f"@p{self.priority}", "delay": f"+{self.delay_ms}ms"}.get(self.kind, "")
-        return f"{self.kind}{extra}:{self.server}"
+        extra = {"starve": f"@p{self.priority}", "delay": f"+{self.delay_ms}ms",
+                 "error": f"=errno{self.errno}"}.get(self.kind, "")
+        return f"{self.kind}{extra}:{'all' if self.server == '*' else self.server}"
 
     def to_dict(self) -> dict:
         return asdict(self) | {"id": self.id}
 
 
-KINDS = ("kill", "freeze", "starve", "delay")
+KINDS = ("kill", "freeze", "starve", "delay", "error")
