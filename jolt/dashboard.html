@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jolt · chaos for QNX</title>
+<style>
+  :root {
+    --bg: #0b0f0e; --panel: #111816; --line: #1f2a27; --ink: #d7e4df; --dim: #7d918a;
+    --phos: #39ff9f; --red: #ff4d5e; --amber: #ffb547; --blue: #5ab8ff; --violet: #b78cff;
+    --mono: ui-monospace, "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.4 var(--mono); }
+  header { display: flex; align-items: baseline; gap: 18px; padding: 14px 22px; border-bottom: 1px solid var(--line); }
+  header h1 { margin: 0; font-size: 20px; letter-spacing: .12em; color: var(--phos); }
+  header .meta { color: var(--dim); }
+  header .status { margin-left: auto; color: var(--amber); }
+  main { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, 1fr); gap: 0; min-height: calc(100vh - 54px); }
+  section { padding: 16px 22px; }
+  #left { border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 12px; }
+  h2 { margin: 0 0 8px; font-size: 12px; letter-spacing: .18em; color: var(--dim); text-transform: uppercase; font-weight: 500; }
+  #graph { width: 100%; height: 420px; background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/40px 40px; border: 1px solid var(--line); }
+  .node rect { fill: var(--panel); stroke: var(--dim); stroke-width: 1.5; rx: 6; transition: stroke .2s, fill .2s; }
+  .node text { fill: var(--ink); font: 13px var(--mono); text-anchor: middle; dominant-baseline: middle; }
+  .node.hit rect { stroke-width: 3; }
+  .node.kill rect { stroke: var(--red); fill: #2a1014; }
+  .node.freeze rect { stroke: var(--blue); fill: #0e1d2b; }
+  .node.starve rect { stroke: var(--amber); fill: #2a1f0c; }
+  .node.delay rect { stroke: var(--violet); fill: #1d142b; }
+  .edge { stroke: var(--dim); stroke-width: 1.6; fill: none; stroke-dasharray: 6 6; animation: flow 1.2s linear infinite; }
+  .edge.pass { stroke: var(--phos); }
+  .edge.fail { stroke: var(--red); stroke-width: 2.6; animation-duration: 3s; }
+  .edge.active { stroke-width: 3; }
+  @keyframes flow { to { stroke-dashoffset: -24; } }
+  #now { min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); background: var(--panel); }
+  #now b { color: var(--amber); }
+  #scorebox { display: flex; align-items: flex-end; gap: 18px; }
+  #score { font-size: 72px; line-height: 1; color: var(--phos); font-weight: 700; text-shadow: 0 0 18px rgba(57,255,159,.35); }
+  #score.low { color: var(--red); text-shadow: 0 0 18px rgba(255,77,94,.35); }
+  #score small { font-size: 22px; color: var(--dim); }
+  #compare { color: var(--dim); }
+  #compare .up { color: var(--phos); }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--dim); font-weight: 500; font-size: 12px; }
+  .chip { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 12px; }
+  .chip.pass { background: rgba(57,255,159,.12); color: var(--phos); }
+  .chip.fail { background: rgba(255,77,94,.14); color: var(--red); }
+  .chip.idle { background: rgba(125,145,138,.14); color: var(--dim); }
+  .bar { height: 6px; background: var(--line); margin-top: 4px; }
+  .bar i { display: block; height: 100%; background: var(--amber); }
+  .fix { color: var(--dim); font-size: 12px; margin-top: 3px; }
+  .legend { display: flex; gap: 14px; color: var(--dim); font-size: 12px; flex-wrap: wrap; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; border: 2px solid currentColor; }
+  .k { color: var(--red); } .f { color: var(--blue); } .s { color: var(--amber); } .d { color: var(--violet); }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } #left { border-right: 0; border-bottom: 1px solid var(--line); } }
+</style>
+</head>
+<body>
+<header>
+  <h1>JOLT</h1><span class="meta" id="meta">chaos engineering for QNX 8.0</span>
+  <span class="status" id="status">waiting for events…</span>
+</header>
+<main>
+  <section id="left">
+    <h2>Message-passing graph (live)</h2>
+    <svg id="graph" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Message-passing graph"></svg>
+    <div class="legend"><span class="k">kill</span><span class="f">freeze</span><span class="s">starve</span><span class="d">delay</span><span class="k">error</span>
+      <span style="color:var(--phos)">edge passed</span><span style="color:var(--red)">edge failed</span></div>
+    <div id="now">Start a run: <code>python3 -m jolt run … --out jolt-out/after</code></div>
+  </section>
+  <section>
+    <h2>Resilience score</h2>
+    <div id="scorebox"><div id="score">--<small>/100</small></div><div id="compare"></div></div>
+    <table><thead><tr><th>Experiment</th><th>Client</th><th>Verdict</th><th>Longest block</th></tr></thead>
+      <tbody id="rows"></tbody></table>
+  </section>
+</main>
+<script>
+const qs = new URLSearchParams(location.search);
+const RUN = qs.get("run") || "jolt-out/after";
+const CMP = qs.get("compare");
+const REPLAY = qs.has("replay");               // replay a finished run with its original pacing
+const SPEED = parseFloat(qs.get("speed") || "1");
+const COLORS = { kill: "kill", freeze: "freeze", starve: "starve", delay: "delay", error: "kill" };
+const svg = document.getElementById("graph");
+let graph = null, nodesEl = {}, edgesEl = {}, seen = 0, verdicts = [], plan = [];
+
+function layout(g) {
+  // layer = longest path from pure clients; servers end up to the right
+  const names = g.processes.map(p => p.name), byPid = {};
+  g.processes.forEach(p => byPid[p.pid] = p.name);
+  const E = g.edges.map(e => [byPid[e.client_pid], byPid[e.server_pid]]).filter(e => e[0] && e[1]);
+  const layer = Object.fromEntries(names.map(n => [n, 0]));
+  for (let i = 0; i < names.length; i++) E.forEach(([c, s]) => { layer[s] = Math.max(layer[s], layer[c] + 1); });
+  const cols = {}; names.forEach(n => (cols[layer[n]] ||= []).push(n));
+  const nc = Math.max(...Object.keys(cols).map(Number)) + 1, pos = {};
+  Object.entries(cols).forEach(([l, ns]) => ns.sort().forEach((n, i) => {
+    pos[n] = { x: 110 + (nc === 1 ? 290 : l * (580 / (nc - 1))), y: (420 / (ns.length + 1)) * (i + 1) };
+  }));
+  return { pos, E };
+}
+
+function draw(g) {
+  graph = g; svg.innerHTML = '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7d918a"/></marker></defs>';
+  const { pos, E } = layout(g);
+  E.forEach(([c, s]) => {
+    const a = pos[c], b = pos[s], p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const mx = (a.x + b.x) / 2;
+    p.setAttribute("d", `M${a.x + 60},${a.y} C${mx},${a.y} ${mx},${b.y} ${b.x - 62},${b.y}`);
+    p.setAttribute("class", "edge"); p.setAttribute("marker-end", "url(#arr)");
+    svg.appendChild(p); edgesEl[c + ">" + s] = p;
+  });
+  Object.entries(pos).forEach(([n, q]) => {
+    const gEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    gEl.setAttribute("class", "node"); gEl.setAttribute("transform", `translate(${q.x - 60},${q.y - 20})`);
+    gEl.innerHTML = `<rect width="120" height="40"></rect><text x="60" y="20">${n}</text>`;
+    svg.appendChild(gEl); nodesEl[n] = gEl;
+  });
+}
+
+function clearHits() { Object.values(nodesEl).forEach(n => n.setAttribute("class", "node")); Object.values(edgesEl).forEach(e => e.classList.remove("active")); }
+
+function onEvent(ev) {
+  if (ev.type === "start") {
+    draw(ev.graph); plan = ev.plan; verdicts = []; document.getElementById("rows").innerHTML = "";
+    document.getElementById("meta").textContent = `target ${ev.target} · seed ${ev.seed} · ${ev.coverage.experiments} experiments over ${ev.coverage.servers} servers`;
+    status(`running`);
+  } else if (ev.type === "inject") {
+    clearHits(); const f = ev.fault;
+    const hit = f.server === "*" ? Object.values(nodesEl) : [nodesEl[f.server]].filter(Boolean);
+    hit.forEach(n => n.setAttribute("class", `node hit ${COLORS[f.kind] || ""}`));
+    ev.clients.forEach(c => Object.entries(edgesEl).forEach(([k, e]) => { if (k === c + ">" + f.server || (f.server === "*" && k.startsWith(c + ">"))) e.classList.add("active"); }));
+    document.getElementById("now").innerHTML = `<b>[${ev.n}/${ev.total}]</b> ${f.kind.toUpperCase()} → ${f.server === "*" ? "every CPU" : f.server}` +
+      (f.kind === "delay" ? ` (+${f.delay_ms} ms via ${f.path})` : f.kind === "error" ? ` (errno ${f.errno} via ${f.path})` : f.kind === "starve" ? ` (priority ${f.priority})` : f.kind === "freeze" ? ` (${f.duration} s)` : "") +
+      ` · watching ${ev.clients.join(", ") || "no clients"}`;
+    status(`experiment ${ev.n} of ${ev.total}`);
+  } else if (ev.type === "verdict") {
+    verdicts.push(ev); const ok = ev.verdict === "pass", idle = ev.verdict === "idle";
+    const e = ev.server === "*" ? null : edgesEl[ev.client + ">" + ev.server];
+    // a link stays red once any experiment on it has failed - the worst verdict wins
+    if (e && !idle) { if (!ok) { e.classList.remove("pass"); e.classList.add("fail"); } else if (!e.classList.contains("fail")) e.classList.add("pass"); }
+    const tr = document.createElement("tr"), pct = Math.min(100, ev.longest_block_s / 5 * 100);
+    tr.innerHTML = `<td>${ev.fault}</td><td>${ev.client}</td><td><span class="chip ${ok ? "pass" : idle ? "idle" : "fail"}">${ev.verdict}</span>` +
+      (ev.fix && !ok ? `<div class="fix">${ev.fix}</div>` : "") + `</td><td>${ev.longest_block_s.toFixed(2)} s<div class="bar"><i style="width:${pct}%"></i></div></td>`;
+    document.getElementById("rows").prepend(tr);
+    const counted = verdicts.filter(v => v.verdict !== "idle");
+    if (counted.length) setScore(Math.round(100 * counted.filter(v => v.verdict === "pass").length / counted.length));
+  } else if (ev.type === "done") {
+    clearHits(); if (ev.score === null) { document.getElementById("score").innerHTML = "n/a"; } else setScore(ev.score);
+    document.getElementById("now").innerHTML = `<b>done</b> · ${ev.passed} of ${ev.total} exercised checks passed` + (ev.idle ? ` · ${ev.idle} idle (not exercised)` : "");
+    status("finished");
+  }
+}
+
+function setScore(v) { const el = document.getElementById("score"); el.innerHTML = `${v}<small>/100</small>`; el.classList.toggle("low", v < 70); }
+function status(s) { document.getElementById("status").textContent = s; }
+
+async function fetchEvents(run) {
+  const r = await fetch(`${run}/events.jsonl?ts=${Date.now()}`); if (!r.ok) return [];
+  return (await r.text()).split("\n").filter(Boolean).map(l => JSON.parse(l));
+}
+
+async function live() {
+  try { const evs = await fetchEvents(RUN); evs.slice(seen).forEach(onEvent); seen = evs.length; } catch (e) {}
+  setTimeout(live, 500);
+}
+
+async function replay() {
+  const evs = await fetchEvents(RUN); if (!evs.length) return;
+  for (let i = 0; i < evs.length; i++) {
+    onEvent(evs[i]);
+    if (i + 1 < evs.length) await new Promise(r => setTimeout(r, Math.min(4000, (evs[i + 1].t - evs[i].t) * 1000 / SPEED)));
+  }
+}
+
+async function compare() {
+  if (!CMP) return;
+  const evs = await fetchEvents(CMP), d = evs.find(e => e.type === "done");
+  if (d) document.getElementById("compare").innerHTML = `before: <b>${d.score}</b>/100<br><span class="up">${d.total - d.passed} failing checks before the fixes</span>`;
+}
+
+compare(); REPLAY ? replay() : live();
+</script>
+</body>
+</html>
