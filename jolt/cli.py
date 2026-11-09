@@ -81,6 +81,13 @@ def main(argv: list[str] | None = None) -> int:
         s.add_argument("--out", default="jolt-out")
         s.add_argument("--reset", help="command run ON THE TARGET before every experiment to "
                        "restore the baseline, e.g. 'sh /tmp/jolt/stack.sh start'")
+        s.add_argument("--min-score", type=int, default=100,
+                       help="exit 1 if the score is below this (default 100), for CI gates")
+    ck = sub.add_parser("check", help="gate CI on a finished run: exit 1 below --min-score")
+    ck.add_argument("--run", default="jolt-out/after")
+    ck.add_argument("--min-score", type=int, default=100)
+    ck.add_argument("--allow-unexercised", action="store_true",
+                    help="pass when no check was exercised (score n/a)")
     ex = sub.add_parser("explain", help="LLM explanation + fixes for a finished run")
     ex.add_argument("--run", default="jolt-out/after")
     ex.add_argument("--src", help="source tree of the system under test (for call-site context)")
@@ -90,6 +97,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if a.cmd == "serve":
         return _serve(a.port)
+    if a.cmd == "check":
+        return check(pathlib.Path(a.run), a.min_score, a.allow_unexercised)
     if a.cmd == "explain":
         from .explain import explain
         explain(pathlib.Path(a.run), pathlib.Path(a.src) if a.src else None)
@@ -163,7 +172,22 @@ def main(argv: list[str] | None = None) -> int:
     (out / "report.md").write_text(to_markdown(meta, verdicts, sc))
     shown = "n/a (no check was exercised)" if sc is None else f"{sc}/100"
     print(f"\nScore {shown}. Reports in {out}/ (report.md, report.json, junit.xml)")
-    return 0 if sc in (100, None) else 1
+    return 0 if sc is None or sc >= a.min_score else 1
+
+
+def check(run: pathlib.Path, min_score: int, allow_unexercised: bool = False) -> int:
+    """CI gate on a recorded run: print the failing checks, exit 1 below min_score."""
+    rep = json.loads((run / "report.json").read_text())
+    sc = rep["score"]
+    failing = [v for v in rep["verdicts"] if v["verdict"] not in ("pass", "idle")]
+    for v in failing:
+        print(f"FAIL {v['fault']:<24} {v['client']:<14} {v['verdict']}")
+    if sc is None:
+        print(f"{run}: score n/a (no check was exercised)")
+        return 0 if allow_unexercised else 1
+    ok = sc >= min_score
+    print(f"{run}: score {sc}/100, minimum {min_score}: {'OK' if ok else 'BELOW MINIMUM'}")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":

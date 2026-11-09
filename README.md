@@ -83,6 +83,8 @@ export ANTHROPIC_API_KEY=...            # optional; without it the prompt is sav
 python3 -m jolt explain --run jolt-out/before --src target/demo-stack
 ```
 
+**In CI:** `jolt run --min-score 100` exits 1 below the threshold, and `jolt check --run <dir>` gates a recorded run. See [Jolt as a CI gate](docs/ci.md).
+
 `--reset` is a command run on the target before every experiment, so each fault starts from the same baseline. The `delay` fault needs it, because clients must reconnect through the interposer.
 
 ## Faults

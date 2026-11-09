@@ -89,3 +89,11 @@ def test_real_qemu_capture_parses():
     assert all(th.state for p in procs.values() for th in p.threads)
     g = build_graph(t, f)              # procnto (pid 1) edges are ignored by default
     assert all(e.server_pid != 1 and e.client_pid != 1 for e in g.edges)
+
+
+def test_check_gate_on_recorded_runs():
+    from jolt.cli import check
+    root = pathlib.Path(__file__).resolve().parent.parent / "jolt-out"
+    assert check(root / "after", 100) == 0          # fixed stack passes the strictest gate
+    assert check(root / "before", 50) == 1          # unfixed stack fails a lenient one
+    assert check(root / "before", 0) == 0
