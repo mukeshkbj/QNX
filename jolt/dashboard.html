@@ -43,7 +43,9 @@
   #score small { font-size: 22px; color: var(--dim); }
   #compare { color: var(--dim); }
   #compare .up { color: var(--phos); }
-  table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; table-layout: fixed; }
+  th:nth-child(1) { width: 32%; } th:nth-child(2) { width: 15%; } th:nth-child(3) { width: 37%; } th:nth-child(4) { width: 16%; }
+  td { overflow-wrap: anywhere; }
   th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--dim); font-weight: 500; font-size: 12px; }
   .chip { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 12px; }
@@ -89,6 +91,8 @@ const COLORS = { kill: "kill", freeze: "freeze", starve: "starve", delay: "delay
 const svg = document.getElementById("graph");
 let graph = null, nodesEl = {}, edgesEl = {}, seen = 0, verdicts = [], plan = [];
 
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const brk = s => esc(s).replace(/([:+=_-])/g, "$1<wbr>");   // preferred break points in long ids
 function layout(g) {
   // layer = longest path from pure clients; servers end up to the right
   const names = g.processes.map(p => p.name), byPid = {};
@@ -117,7 +121,7 @@ function draw(g) {
   Object.entries(pos).forEach(([n, q]) => {
     const gEl = document.createElementNS("http://www.w3.org/2000/svg", "g");
     gEl.setAttribute("class", "node"); gEl.setAttribute("transform", `translate(${q.x - 60},${q.y - 20})`);
-    gEl.innerHTML = `<rect width="120" height="40"></rect><text x="60" y="20">${n}</text>`;
+    gEl.innerHTML = `<rect width="120" height="40"></rect><text x="60" y="20">${esc(n)}</text>`;
     svg.appendChild(gEl); nodesEl[n] = gEl;
   });
 }
@@ -134,9 +138,9 @@ function onEvent(ev) {
     const hit = f.server === "*" ? Object.values(nodesEl) : [nodesEl[f.server]].filter(Boolean);
     hit.forEach(n => n.setAttribute("class", `node hit ${COLORS[f.kind] || ""}`));
     ev.clients.forEach(c => Object.entries(edgesEl).forEach(([k, e]) => { if (k === c + ">" + f.server || (f.server === "*" && k.startsWith(c + ">"))) e.classList.add("active"); }));
-    document.getElementById("now").innerHTML = `<b>[${ev.n}/${ev.total}]</b> ${f.kind.toUpperCase()} → ${f.server === "*" ? "every CPU" : f.server}` +
-      (f.kind === "delay" ? ` (+${f.delay_ms} ms via ${f.path})` : f.kind === "error" ? ` (errno ${f.errno} via ${f.path})` : f.kind === "starve" ? ` (priority ${f.priority})` : f.kind === "freeze" ? ` (${f.duration} s)` : "") +
-      ` · watching ${ev.clients.join(", ") || "no clients"}`;
+    document.getElementById("now").innerHTML = `<b>[${ev.n}/${ev.total}]</b> ${esc(f.kind.toUpperCase())} → ${f.server === "*" ? "every CPU" : esc(f.server)}` +
+      (f.kind === "delay" ? ` (+${f.delay_ms} ms via ${esc(f.path)})` : f.kind === "error" ? ` (errno ${f.errno} via ${esc(f.path)})` : f.kind === "starve" ? ` (priority ${f.priority})` : f.kind === "freeze" ? ` (${f.duration} s)` : "") +
+      ` · watching ${esc(ev.clients.join(", ") || "no clients")}`;
     status(`experiment ${ev.n} of ${ev.total}`);
   } else if (ev.type === "verdict") {
     verdicts.push(ev); const ok = ev.verdict === "pass", idle = ev.verdict === "idle";
@@ -144,8 +148,8 @@ function onEvent(ev) {
     // a link stays red once any experiment on it has failed - the worst verdict wins
     if (e && !idle) { if (!ok) { e.classList.remove("pass"); e.classList.add("fail"); } else if (!e.classList.contains("fail")) e.classList.add("pass"); }
     const tr = document.createElement("tr"), pct = Math.min(100, ev.longest_block_s / 5 * 100);
-    tr.innerHTML = `<td>${ev.fault}</td><td>${ev.client}</td><td><span class="chip ${ok ? "pass" : idle ? "idle" : "fail"}">${ev.verdict}</span>` +
-      (ev.fix && !ok ? `<div class="fix">${ev.fix}</div>` : "") + `</td><td>${ev.longest_block_s.toFixed(2)} s<div class="bar"><i style="width:${pct}%"></i></div></td>`;
+    tr.innerHTML = `<td>${brk(ev.fault)}</td><td>${brk(ev.client)}</td><td><span class="chip ${ok ? "pass" : idle ? "idle" : "fail"}">${esc(ev.verdict)}</span>` +
+      (ev.fix && !ok ? `<div class="fix">${esc(ev.fix)}</div>` : "") + `</td><td>${ev.longest_block_s.toFixed(2)} s<div class="bar"><i style="width:${pct}%"></i></div></td>`;
     document.getElementById("rows").prepend(tr);
     const counted = verdicts.filter(v => v.verdict !== "idle");
     if (counted.length) setScore(Math.round(100 * counted.filter(v => v.verdict === "pass").length / counted.length));

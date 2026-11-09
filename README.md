@@ -8,6 +8,12 @@ QNX systems are built from small processes that talk by synchronous message pass
 
 Jolt connects to a running QNX 8.0 target and reads its live message-passing graph from `pidin`. It then injects faults against every server: kill, freeze, CPU starvation and slow replies. It watches every client from the kernel's point of view and produces a resilience score, with the exact fix for each failure.
 
+| Before the fixes: 29/100 | After the fixes: 100/100 |
+| --- | --- |
+| ![Jolt dashboard, demo stack before the fixes](docs/img/dashboard-before.png) | ![Jolt dashboard, demo stack after the fixes](docs/img/dashboard-after.png) |
+
+*The live dashboard (`jolt serve`), replaying the recorded runs in [`jolt-out/`](jolt-out/). Each failing check carries the fix Jolt recommends.*
+
 - **Deterministic:** the fault plan is full coverage over the discovered graph, shuffled with a seed. The same graph and seed give the same plan.
 - **Evidence for CI:** writes `report.md`, `report.json` and `junit.xml`.
 - **Dev and test targets only:** it kills and stops processes. Never point it at production.
