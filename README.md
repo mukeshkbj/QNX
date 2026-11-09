@@ -1,5 +1,7 @@
 # Jolt: chaos engineering for QNX 8.0
 
+[![ci](https://github.com/mukeshkbj/QNX/actions/workflows/ci.yml/badge.svg)](https://github.com/mukeshkbj/QNX/actions/workflows/ci.yml) [![licence](https://img.shields.io/badge/licence-Apache--2.0-blue)](LICENSE)
+
 Jolt finds the place where your QNX system freezes before your customer does.
 
 QNX systems are built from small processes that talk by synchronous message passing. When a server **dies**, the kernel unblocks its clients with an error. When a server **hangs** (frozen, starved or deadlocked), nothing does. A client without a timeout waits forever.
@@ -10,7 +12,7 @@ Jolt connects to a running QNX 8.0 target and reads its live message-passing gra
 - **Evidence for CI:** writes `report.md`, `report.json` and `junit.xml`.
 - **Dev and test targets only:** it kills and stops processes. Never point it at production.
 
-> Status: early development for the [QNX Global Hackathon](https://qnx.devpost.com/), Developer Tooling & Host Tools track.
+> Built for the [QNX Global Hackathon](https://qnx.devpost.com/), Developer Tooling & Host Tools track.
 
 ## Architecture
 
