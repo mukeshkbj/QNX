@@ -3,7 +3,7 @@
     "target": "qnxvm",
     "seed": 1,
     "reset": "sh /tmp/jolt/stack.sh start",
-    "time": "2026-11-07T21:29:26",
+    "time": "2026-11-09T09:17:05",
     "coverage": {
       "servers": 2,
       "edges": 2,
@@ -22,12 +22,12 @@
   "graph": {
     "processes": [
       {
-        "pid": 823318,
+        "pid": 1781782,
         "name": "imu",
         "path": "imu",
         "threads": [
           {
-            "pid": 823318,
+            "pid": 1781782,
             "tid": 1,
             "name": "imu",
             "state": "SIGWAITINFO",
@@ -36,7 +36,7 @@
             "priority": 10
           },
           {
-            "pid": 823318,
+            "pid": 1781782,
             "tid": 2,
             "name": "imu",
             "state": "RECEIVE",
@@ -47,12 +47,12 @@
         ]
       },
       {
-        "pid": 823319,
+        "pid": 1781783,
         "name": "actuator",
         "path": "actuator",
         "threads": [
           {
-            "pid": 823319,
+            "pid": 1781783,
             "tid": 1,
             "name": "actuator",
             "state": "SIGWAITINFO",
@@ -61,7 +61,7 @@
             "priority": 10
           },
           {
-            "pid": 823319,
+            "pid": 1781783,
             "tid": 2,
             "name": "actuator",
             "state": "RECEIVE",
@@ -72,12 +72,12 @@
         ]
       },
       {
-        "pid": 839704,
+        "pid": 1798168,
         "name": "planner",
         "path": "planner",
         "threads": [
           {
-            "pid": 839704,
+            "pid": 1798168,
             "tid": 1,
             "name": "planner",
             "state": "NANOSLEEP",
@@ -88,12 +88,12 @@
         ]
       },
       {
-        "pid": 839705,
+        "pid": 1798169,
         "name": "watchdog",
         "path": "watchdog",
         "threads": [
           {
-            "pid": 839705,
+            "pid": 1798169,
             "tid": 1,
             "name": "watchdog",
             "state": "NANOSLEEP",
@@ -106,14 +106,14 @@
     ],
     "edges": [
       {
-        "client_pid": 839704,
-        "server_pid": 823318,
+        "client_pid": 1798168,
+        "server_pid": 1781782,
         "via": "fd:/dev/imu",
         "path": "/dev/imu"
       },
       {
-        "client_pid": 839704,
-        "server_pid": 823319,
+        "client_pid": 1798168,
+        "server_pid": 1781783,
         "via": "coid",
         "path": null
       }
@@ -171,7 +171,7 @@
       "client": "planner",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
+      "recovery_s": 0.04,
       "episodes": 0,
       "fix": null
     },
@@ -182,7 +182,7 @@
       "client": "planner",
       "verdict": "slow-intolerant",
       "longest_block_s": 1.49,
-      "recovery_s": 0.02,
+      "recovery_s": 0.03,
       "episodes": 4,
       "fix": "Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on."
     },
@@ -192,7 +192,7 @@
       "server": "actuator",
       "client": "planner",
       "verdict": "hang-no-timeout",
-      "longest_block_s": 4.83,
+      "longest_block_s": 4.79,
       "recovery_s": 0.02,
       "episodes": 1,
       "fix": "Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."

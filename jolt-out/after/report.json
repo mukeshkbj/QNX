@@ -3,7 +3,7 @@
     "target": "qnxvm",
     "seed": 1,
     "reset": "sh /tmp/jolt/stack.sh start-fixed",
-    "time": "2026-11-07T21:31:52",
+    "time": "2026-11-09T09:19:30",
     "coverage": {
       "servers": 3,
       "edges": 4,
@@ -22,12 +22,12 @@
   "graph": {
     "processes": [
       {
-        "pid": 3907608,
+        "pid": 4931608,
         "name": "watchdog",
         "path": "watchdog",
         "threads": [
           {
-            "pid": 3907608,
+            "pid": 4931608,
             "tid": 1,
             "name": "watchdog",
             "state": "RECEIVE",
@@ -38,12 +38,12 @@
         ]
       },
       {
-        "pid": 3915802,
+        "pid": 4939802,
         "name": "actuator",
         "path": "actuator",
         "threads": [
           {
-            "pid": 3915802,
+            "pid": 4939802,
             "tid": 1,
             "name": "actuator",
             "state": "SIGWAITINFO",
@@ -52,7 +52,7 @@
             "priority": 62
           },
           {
-            "pid": 3915802,
+            "pid": 4939802,
             "tid": 2,
             "name": "actuator",
             "state": "RECEIVE",
@@ -61,7 +61,7 @@
             "priority": 61
           },
           {
-            "pid": 3915802,
+            "pid": 4939802,
             "tid": 3,
             "name": "actuator",
             "state": "NANOSLEEP",
@@ -72,12 +72,12 @@
         ]
       },
       {
-        "pid": 3923995,
+        "pid": 4947995,
         "name": "imu",
         "path": "imu",
         "threads": [
           {
-            "pid": 3923995,
+            "pid": 4947995,
             "tid": 1,
             "name": "imu",
             "state": "SIGWAITINFO",
@@ -86,7 +86,7 @@
             "priority": 62
           },
           {
-            "pid": 3923995,
+            "pid": 4947995,
             "tid": 2,
             "name": "imu",
             "state": "RECEIVE",
@@ -95,7 +95,7 @@
             "priority": 61
           },
           {
-            "pid": 3923995,
+            "pid": 4947995,
             "tid": 3,
             "name": "imu",
             "state": "NANOSLEEP",
@@ -106,12 +106,12 @@
         ]
       },
       {
-        "pid": 3936279,
+        "pid": 4960279,
         "name": "planner",
         "path": "planner",
         "threads": [
           {
-            "pid": 3936279,
+            "pid": 4960279,
             "tid": 1,
             "name": "planner",
             "state": "NANOSLEEP",
@@ -124,26 +124,26 @@
     ],
     "edges": [
       {
-        "client_pid": 3915802,
-        "server_pid": 3907608,
+        "client_pid": 4939802,
+        "server_pid": 4931608,
         "via": "coid",
         "path": null
       },
       {
-        "client_pid": 3923995,
-        "server_pid": 3907608,
+        "client_pid": 4947995,
+        "server_pid": 4931608,
         "via": "coid",
         "path": null
       },
       {
-        "client_pid": 3936279,
-        "server_pid": 3923995,
+        "client_pid": 4960279,
+        "server_pid": 4947995,
         "via": "fd:/dev/imu",
         "path": "/dev/imu"
       },
       {
-        "client_pid": 3936279,
-        "server_pid": 3915802,
+        "client_pid": 4960279,
+        "server_pid": 4939802,
         "via": "coid",
         "path": null
       }
@@ -157,8 +157,8 @@
       "client": "planner",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
-      "episodes": 107,
+      "recovery_s": 0.72,
+      "episodes": 100,
       "fix": null
     },
     {
@@ -168,7 +168,7 @@
       "client": "actuator",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
+      "recovery_s": 0.04,
       "episodes": 0,
       "fix": null
     },
@@ -179,7 +179,7 @@
       "client": "imu",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
+      "recovery_s": 0.04,
       "episodes": 0,
       "fix": null
     },
@@ -190,7 +190,7 @@
       "client": "actuator",
       "verdict": "idle",
       "longest_block_s": 0.0,
-      "recovery_s": 0.54,
+      "recovery_s": 0.04,
       "episodes": 0,
       "fix": null
     },
@@ -201,7 +201,7 @@
       "client": "imu",
       "verdict": "idle",
       "longest_block_s": 0.0,
-      "recovery_s": 0.54,
+      "recovery_s": 0.04,
       "episodes": 0,
       "fix": null
     },
@@ -212,8 +212,8 @@
       "client": "planner",
       "verdict": "pass",
       "longest_block_s": 0.48,
-      "recovery_s": 0.02,
-      "episodes": 8,
+      "recovery_s": 0.05,
+      "episodes": 7,
       "fix": null
     },
     {
@@ -222,7 +222,7 @@
       "server": "imu",
       "client": "planner",
       "verdict": "pass",
-      "longest_block_s": 0.83,
+      "longest_block_s": 0.82,
       "recovery_s": 0.02,
       "episodes": 1,
       "fix": null
@@ -234,7 +234,7 @@
       "client": "planner",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
+      "recovery_s": 0.03,
       "episodes": 0,
       "fix": null
     },
@@ -245,7 +245,7 @@
       "client": "actuator",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.11,
+      "recovery_s": 0.13,
       "episodes": 0,
       "fix": null
     },
@@ -256,7 +256,7 @@
       "client": "imu",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.11,
+      "recovery_s": 0.13,
       "episodes": 0,
       "fix": null
     },
@@ -267,7 +267,7 @@
       "client": "planner",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.11,
+      "recovery_s": 0.13,
       "episodes": 0,
       "fix": null
     },
@@ -277,7 +277,7 @@
       "server": "actuator",
       "client": "planner",
       "verdict": "pass",
-      "longest_block_s": 0.72,
+      "longest_block_s": 0.69,
       "recovery_s": 0.02,
       "episodes": 1,
       "fix": null
@@ -289,7 +289,7 @@
       "client": "planner",
       "verdict": "pass",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
+      "recovery_s": 0.03,
       "episodes": 0,
       "fix": null
     }

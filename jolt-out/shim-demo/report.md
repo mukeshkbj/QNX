@@ -4,9 +4,9 @@
 
 | Fault | Client | Verdict | Longest block (s) | Fix |
 | --- | --- | --- | --- | --- |
-| delay+1500ms:eventfd-mgr | efd_worker | slow-intolerant | 4.14 | Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on. |
+| delay+1500ms:eventfd-mgr | efd_worker | slow-intolerant | 4.13 | Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on. |
 | error=errno5:eventfd-mgr | efd_worker | lost-stdio | 0.0 | The client lost a standard stream (fd 0-2) while handling the fault: some error path returned or closed the wrong descriptor. Check every fd-returning function returns -1 (not EXIT_FAILURE) on error. |
-| freeze:eventfd-mgr | efd_worker | hang-no-timeout | 4.83 | Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT. |
+| freeze:eventfd-mgr | efd_worker | hang-no-timeout | 4.85 | Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT. |
 | kill:eventfd-mgr | efd_worker | server-not-restarted | 0.0 | Supervise the server (e.g. a watchdog or the System Launch and Monitor) so it is restarted after it dies. |
 | starve@p60:all | efd_worker | starved | 0.0 | The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning. |
 

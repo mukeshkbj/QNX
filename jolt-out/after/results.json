@@ -10,24 +10,25 @@
       "errno": 5,
       "id": "error=errno5:imu"
     },
-    "server_pid_before": 4132891,
-    "server_pid_after": 5091355,
+    "server_pid_before": 5156891,
+    "server_pid_after": 6131739,
     "server_restarted": false,
     "recovered": true,
-    "recovery_s": 0.02,
+    "recovery_s": 0.72,
     "clients": [
       {
         "client": "planner",
         "longest_block_s": 0.0,
         "survived": true,
         "verdict": "pass",
-        "episodes": 107,
-        "ready_s": 0.0
+        "episodes": 100,
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 4222997 clients {'planner': 4358167} -> client 4358167 longest_ms 0 episodes 0 samples 238 alive 1 ready_ms 0",
-      "interpose: done. connects 107, forwarded 0, released-by-client-timeout 0, errors 107"
+      "watch: server 5263381 clients {'planner': 5398551} -> client 5398551 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0",
+      "interpose: done. connects 100, forwarded 0, released-by-client-timeout 0, errors 100"
     ]
   },
   {
@@ -41,11 +42,11 @@
       "errno": 5,
       "id": "kill:watchdog"
     },
-    "server_pid_before": 5300247,
-    "server_pid_after": 5431316,
+    "server_pid_before": 6340631,
+    "server_pid_after": 6471700,
     "server_restarted": true,
     "recovered": true,
-    "recovery_s": 0.02,
+    "recovery_s": 0.04,
     "clients": [
       {
         "client": "actuator",
@@ -53,7 +54,8 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "imu",
@@ -61,11 +63,12 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 5300247 clients {'actuator': 5308442, 'imu': 5316635} -> client 5308442 longest_ms 0 episodes 0 samples 95 alive 1 ready_ms 0 | client 5316635 longest_ms 0 episodes 0 samples 95 alive 1 ready_ms 0"
+      "watch: server 6340631 clients {'actuator': 6348826, 'imu': 6357019} -> client 6348826 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0 | client 6357019 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
     ]
   },
   {
@@ -79,11 +82,11 @@
       "errno": 5,
       "id": "freeze:watchdog"
     },
-    "server_pid_before": 5586966,
-    "server_pid_after": 5586966,
+    "server_pid_before": 6627350,
+    "server_pid_after": 6627350,
     "server_restarted": false,
     "recovered": true,
-    "recovery_s": 0.54,
+    "recovery_s": 0.04,
     "clients": [
       {
         "client": "actuator",
@@ -91,7 +94,8 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "imu",
@@ -99,11 +103,12 @@
         "survived": true,
         "verdict": "idle",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 5586966 clients {'actuator': 5595162, 'imu': 5603355} -> client 5595162 longest_ms 0 episodes 0 samples 238 alive 1 ready_ms 0 | client 5603355 longest_ms 0 episodes 0 samples 238 alive 1 ready_ms 0"
+      "watch: server 6627350 clients {'actuator': 6635546, 'imu': 6643739} -> client 6635546 longest_ms 0 episodes 0 samples 238 alive 1 ready_ms 0 | client 6643739 longest_ms 0 episodes 0 samples 238 alive 1 ready_ms 0"
     ]
   },
   {
@@ -117,24 +122,25 @@
       "errno": 5,
       "id": "delay+1500ms:imu"
     },
-    "server_pid_before": 5939227,
-    "server_pid_after": 6897691,
+    "server_pid_before": 6950939,
+    "server_pid_after": 7925787,
     "server_restarted": false,
     "recovered": true,
-    "recovery_s": 0.02,
+    "recovery_s": 0.05,
     "clients": [
       {
         "client": "planner",
         "longest_block_s": 0.48,
         "survived": true,
         "verdict": "pass",
-        "episodes": 8,
-        "ready_s": 0.0
+        "episodes": 7,
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 6029336 clients {'planner': 6164501} -> client 6164501 longest_ms 484 episodes 8 samples 239 alive 1 ready_ms 0",
-      "interpose: done. connects 1, forwarded 0, released-by-client-timeout 30, errors 0"
+      "watch: server 7057432 clients {'planner': 7192597} -> client 7192597 longest_ms 485 episodes 7 samples 225 alive 1 ready_ms 0",
+      "interpose: done. connects 1, forwarded 0, released-by-client-timeout 31, errors 0"
     ]
   },
   {
@@ -148,23 +154,24 @@
       "errno": 5,
       "id": "freeze:imu"
     },
-    "server_pid_before": 7122971,
-    "server_pid_after": 7241757,
+    "server_pid_before": 8151067,
+    "server_pid_after": 8269853,
     "server_restarted": false,
     "recovered": true,
     "recovery_s": 0.02,
     "clients": [
       {
         "client": "planner",
-        "longest_block_s": 0.83,
+        "longest_block_s": 0.82,
         "survived": true,
         "verdict": "pass",
         "episodes": 1,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 7122971 clients {'planner': 7135253} -> client 7135253 longest_ms 827 episodes 1 samples 237 alive 1 ready_ms 0"
+      "watch: server 8151067 clients {'planner': 8163349} -> client 8163349 longest_ms 819 episodes 1 samples 238 alive 1 ready_ms 0"
     ]
   },
   {
@@ -178,11 +185,11 @@
       "errno": 5,
       "id": "kill:actuator"
     },
-    "server_pid_before": 7421978,
-    "server_pid_after": 7528472,
+    "server_pid_before": 8450074,
+    "server_pid_after": 8556568,
     "server_restarted": true,
     "recovered": true,
-    "recovery_s": 0.02,
+    "recovery_s": 0.03,
     "clients": [
       {
         "client": "planner",
@@ -190,11 +197,12 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 7421978 clients {'planner': 7442453} -> client 7442453 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
+      "watch: server 8450074 clients {'planner': 8470549} -> client 8470549 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
     ]
   },
   {
@@ -212,7 +220,7 @@
     "server_pid_after": null,
     "server_restarted": false,
     "recovered": true,
-    "recovery_s": 0.11,
+    "recovery_s": 0.13,
     "clients": [
       {
         "client": "actuator",
@@ -220,7 +228,8 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "imu",
@@ -228,7 +237,8 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       },
       {
         "client": "planner",
@@ -236,12 +246,13 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
       "starve: all CPUs at priority 60",
-      "watch: server 0 clients {'actuator': 7700506, 'imu': 7708699, 'planner': 7720981} -> client 7700506 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0 | client 7708699 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0 | client 7720981 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0"
+      "watch: server 0 clients {'actuator': 8728602, 'imu': 8736795, 'planner': 8749077} -> client 8728602 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0 | client 8736795 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0 | client 8749077 longest_ms 0 episodes 0 samples 239 alive 1 ready_ms 0"
     ]
   },
   {
@@ -255,23 +266,24 @@
       "errno": 5,
       "id": "freeze:actuator"
     },
-    "server_pid_before": 7970842,
-    "server_pid_after": 8097821,
+    "server_pid_before": 8998938,
+    "server_pid_after": 9125917,
     "server_restarted": false,
     "recovered": true,
     "recovery_s": 0.02,
     "clients": [
       {
         "client": "planner",
-        "longest_block_s": 0.72,
+        "longest_block_s": 0.69,
         "survived": true,
         "verdict": "pass",
         "episodes": 1,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 7970842 clients {'planner': 7991317} -> client 7991317 longest_ms 718 episodes 1 samples 238 alive 1 ready_ms 0"
+      "watch: server 8998938 clients {'planner': 9019413} -> client 9019413 longest_ms 693 episodes 1 samples 239 alive 1 ready_ms 0"
     ]
   },
   {
@@ -285,11 +297,11 @@
       "errno": 5,
       "id": "kill:imu"
     },
-    "server_pid_before": 8286235,
-    "server_pid_after": 8384536,
+    "server_pid_before": 9314331,
+    "server_pid_after": 9412632,
     "server_restarted": true,
     "recovered": true,
-    "recovery_s": 0.02,
+    "recovery_s": 0.03,
     "clients": [
       {
         "client": "planner",
@@ -297,11 +309,12 @@
         "survived": true,
         "verdict": "pass",
         "episodes": 0,
-        "ready_s": 0.0
+        "ready_s": 0.0,
+        "lost_stdio": []
       }
     ],
     "notes": [
-      "watch: server 8286235 clients {'planner': 8298517} -> client 8298517 longest_ms 0 episodes 0 samples 95 alive 1 ready_ms 0"
+      "watch: server 9314331 clients {'planner': 9326613} -> client 9326613 longest_ms 0 episodes 0 samples 96 alive 1 ready_ms 0"
     ]
   }
 ]

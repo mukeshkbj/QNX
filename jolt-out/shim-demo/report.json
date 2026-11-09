@@ -3,7 +3,7 @@
     "target": "qnxvm",
     "seed": 1,
     "reset": "sh /tmp/jolt/shim-stack.sh start",
-    "time": "2026-11-07T21:36:09",
+    "time": "2026-11-09T09:20:58",
     "coverage": {
       "servers": 1,
       "edges": 1,
@@ -22,12 +22,12 @@
   "graph": {
     "processes": [
       {
-        "pid": 11567126,
+        "pid": 9941014,
         "name": "eventfd-mgr",
         "path": "eventfd-mgr",
         "threads": [
           {
-            "pid": 11567126,
+            "pid": 9941014,
             "tid": 1,
             "name": "eventfd-mgr",
             "state": "RECEIVE",
@@ -38,12 +38,12 @@
         ]
       },
       {
-        "pid": 11579415,
+        "pid": 9953303,
         "name": "efd_worker",
         "path": "efd_worker",
         "threads": [
           {
-            "pid": 11579415,
+            "pid": 9953303,
             "tid": 1,
             "name": "efd_worker",
             "state": "NANOSLEEP",
@@ -56,8 +56,8 @@
     ],
     "edges": [
       {
-        "client_pid": 11579415,
-        "server_pid": 11567126,
+        "client_pid": 9953303,
+        "server_pid": 9941014,
         "via": "fd:/dev/eventfd",
         "path": "/dev/eventfd"
       }
@@ -70,8 +70,8 @@
       "server": "eventfd-mgr",
       "client": "efd_worker",
       "verdict": "slow-intolerant",
-      "longest_block_s": 4.14,
-      "recovery_s": 0.02,
+      "longest_block_s": 4.13,
+      "recovery_s": 0.03,
       "episodes": 2,
       "fix": "Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on."
     },
@@ -82,7 +82,7 @@
       "client": "efd_worker",
       "verdict": "lost-stdio",
       "longest_block_s": 0.0,
-      "recovery_s": 0.02,
+      "recovery_s": 0.03,
       "episodes": 36,
       "fix": "The client lost a standard stream (fd 0-2) while handling the fault: some error path returned or closed the wrong descriptor. Check every fd-returning function returns -1 (not EXIT_FAILURE) on error."
     },
@@ -93,7 +93,7 @@
       "client": "efd_worker",
       "verdict": "starved",
       "longest_block_s": 0.0,
-      "recovery_s": 0.1,
+      "recovery_s": 0.02,
       "episodes": 0,
       "fix": "The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning."
     },
@@ -114,7 +114,7 @@
       "server": "eventfd-mgr",
       "client": "efd_worker",
       "verdict": "hang-no-timeout",
-      "longest_block_s": 4.83,
+      "longest_block_s": 4.85,
       "recovery_s": 0.02,
       "episodes": 1,
       "fix": "Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT."

@@ -6,8 +6,8 @@
 | --- | --- | --- | --- | --- |
 | delay+1500ms:imu | planner | pass | 0.48 |  |
 | error=errno5:imu | planner | pass | 0.0 |  |
-| freeze:actuator | planner | pass | 0.72 |  |
-| freeze:imu | planner | pass | 0.83 |  |
+| freeze:actuator | planner | pass | 0.69 |  |
+| freeze:imu | planner | pass | 0.82 |  |
 | kill:actuator | planner | pass | 0.0 |  |
 | kill:imu | planner | pass | 0.0 |  |
 | kill:watchdog | actuator | pass | 0.0 |  |

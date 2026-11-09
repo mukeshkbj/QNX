@@ -99,7 +99,7 @@
       }
     ],
     "notes": [
-      "watch: server 16387 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'pci-server': 28676, 'random': 131081} -> client 65544 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 155659 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 282643 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 179 alive 1 ready_ms 0"
+      "watch: server 16387 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'pci-server': 28676, 'random': 131081} -> client 65544 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 155659 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 282643 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 173 alive 1 ready_ms 0"
     ]
   },
   {
@@ -117,7 +117,7 @@
     "server_pid_after": null,
     "server_restarted": false,
     "recovered": true,
-    "recovery_s": 0.02,
+    "recovery_s": 0.12,
     "clients": [
       {
         "client": "devb-eide",
@@ -125,7 +125,7 @@
         "survived": true,
         "verdict": "starved",
         "episodes": 0,
-        "ready_s": 3.63,
+        "ready_s": 3.53,
         "lost_stdio": []
       },
       {
@@ -213,9 +213,9 @@
         "client": "random",
         "longest_block_s": 0.0,
         "survived": true,
-        "verdict": "pass",
+        "verdict": "starved",
         "episodes": 0,
-        "ready_s": 0.0,
+        "ready_s": 1.66,
         "lost_stdio": []
       },
       {
@@ -239,7 +239,7 @@
     ],
     "notes": [
       "starve: all CPUs at priority 60",
-      "watch: server 0 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'ksh': 57351, 'pci-server': 28676, 'qconn': 253967, 'random': 131081, 'sshd': 249870, 'sshd-session': 757778} -> client 65544 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 3633 | client 155659 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 3654 | client 282643 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 57351 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 253967 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 249870 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0 | client 757778 longest_ms 0 episodes 0 samples 190 alive 1 ready_ms 0"
+      "watch: server 0 clients {'devb-eide': 65544, 'devc-pty': 155659, 'dhcpcd': 225297, 'dumper': 159756, 'fsevmgr': 61446, 'io-sock': 163853, 'io-usb-otg': 282643, 'ksh': 57351, 'pci-server': 28676, 'qconn': 253967, 'random': 131081, 'sshd': 249870, 'sshd-session': 1716242} -> client 65544 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 3529 | client 155659 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 225297 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 159756 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 61446 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 3655 | client 282643 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 57351 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 28676 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 253967 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 131081 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 1660 | client 249870 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0 | client 1716242 longest_ms 0 episodes 0 samples 189 alive 1 ready_ms 0"
     ]
   },
   {
@@ -297,7 +297,7 @@
       }
     ],
     "notes": [
-      "watch: server 131081 clients {'dhcpcd': 225297, 'io-sock': 163853, 'sshd': 249870, 'sshd-session': 757778} -> client 225297 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0 | client 249870 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0 | client 757778 longest_ms 0 episodes 0 samples 184 alive 1 ready_ms 0"
+      "watch: server 131081 clients {'dhcpcd': 225297, 'io-sock': 163853, 'sshd': 249870, 'sshd-session': 1716242} -> client 225297 longest_ms 0 episodes 0 samples 185 alive 1 ready_ms 0 | client 163853 longest_ms 0 episodes 0 samples 185 alive 1 ready_ms 0 | client 249870 longest_ms 0 episodes 0 samples 185 alive 1 ready_ms 0 | client 1716242 longest_ms 0 episodes 0 samples 185 alive 1 ready_ms 0"
     ]
   }
 ]

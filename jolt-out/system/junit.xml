@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="jolt" tests="26" failures="2" skipped="13">
+<testsuite name="jolt" tests="26" failures="3" skipped="13">
   <testcase classname="slogger2" name="freeze:slogger2 -&gt; devb-eide">
     <skipped message="client sent no request during the fault"/>
   </testcase>
@@ -41,7 +41,9 @@
   <testcase classname="*" name="starve@p60:all -&gt; ksh"/>
   <testcase classname="*" name="starve@p60:all -&gt; pci-server"/>
   <testcase classname="*" name="starve@p60:all -&gt; qconn"/>
-  <testcase classname="*" name="starve@p60:all -&gt; random"/>
+  <testcase classname="*" name="starve@p60:all -&gt; random">
+    <failure message="starved: The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 &lt;cmd&gt;` or pthread_setschedparam) or use adaptive partitioning."/>
+  </testcase>
   <testcase classname="*" name="starve@p60:all -&gt; sshd"/>
   <testcase classname="*" name="starve@p60:all -&gt; sshd-session"/>
   <testcase classname="random" name="freeze:random -&gt; dhcpcd">

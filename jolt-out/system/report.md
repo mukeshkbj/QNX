@@ -1,11 +1,12 @@
 # Jolt resilience report: qnxvm
 
-**Score: 85/100** (11 of 13 exercised checks passed; 13 idle; seed 1)
+**Score: 77/100** (10 of 13 exercised checks passed; 13 idle; seed 1)
 
 | Fault | Client | Verdict | Longest block (s) | Fix |
 | --- | --- | --- | --- | --- |
 | starve@p60:all | devb-eide | starved | 0.0 | The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning. |
 | starve@p60:all | io-sock | starved | 0.0 | The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning. |
+| starve@p60:all | random | starved | 0.0 | The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning. |
 | starve@p60:all | devc-pty | pass | 0.0 |  |
 | starve@p60:all | dhcpcd | pass | 0.0 |  |
 | starve@p60:all | dumper | pass | 0.0 |  |
@@ -14,7 +15,6 @@
 | starve@p60:all | ksh | pass | 0.0 |  |
 | starve@p60:all | pci-server | pass | 0.0 |  |
 | starve@p60:all | qconn | pass | 0.0 |  |
-| starve@p60:all | random | pass | 0.0 |  |
 | starve@p60:all | sshd | pass | 0.0 |  |
 | starve@p60:all | sshd-session | pass | 0.0 |  |
 | freeze:random | dhcpcd | idle | 0.0 |  |

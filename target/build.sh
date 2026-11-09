@@ -18,6 +18,7 @@ qcc $CF -o "$OUT/watchdog"    demo-stack/watchdog.c
 qcc $CF -o "$OUT/jolt_starve" tools/jolt_starve.c
 qcc $CF -o "$OUT/jolt_watch"  tools/jolt_watch.c
 qcc $CF -o "$OUT/jolt_interpose" tools/jolt_interpose.c
+qcc $CF -o "$OUT/interpose_check" tests/interpose_check.c
 cp demo-stack/stack.sh "$OUT/"
 echo "built $(ls "$OUT" | tr '\n' ' ') for $V"
 

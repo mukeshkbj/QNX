@@ -109,7 +109,7 @@ All runs are on QEMU x86_64, QNX 8.0, seed 1. Recorded outputs are in [`jolt-out
 | Target | Score | Findings |
 | --- | --- | --- |
 | [QNX `shim-demo`](https://gitlab.com/qnx/projects/shim-demo) (`eventfd-mgr` + `libeventfd` shim, built unchanged), driven by a Linux-style harness client ([`thirdparty/shim-demo/efd_worker.c`](thirdparty/shim-demo/efd_worker.c), ours) | 0/100 | See below |
-| QNX system services on the QEMU image (`slogger2`, `random`; freeze + system-wide starve only) | 85/100 | Freezes: every client idle; slog2 logging is shared-memory based and `/dev/random` is read rarely, so nobody blocks. Starve at priority 60: `io-sock` (network) and `devb-eide` (disk) are starved; on this image they run below 60. That's a system priority-design fact, not a QNX bug |
+| QNX system services on the QEMU image (`slogger2`, `random`; freeze + system-wide starve only) | 77–85/100 | Freezes: every client idle; slog2 logging is shared-memory based and `/dev/random` is read rarely, so nobody blocks. Starve at priority 60: `io-sock` (network) and `devb-eide` (disk) are starved in both recorded runs; `random` was starved in one, because it only competes for the CPU when it is runnable during the 4 s load, hence the range. On this image they run below 60. That's a system priority-design fact, not a QNX bug |
 
 `shim-demo` findings:
 
@@ -158,6 +158,7 @@ The weaknesses are deliberate, so the before/after runs are easy to follow. Jolt
 | Name service `/dev/name/local` (served by procnto) | `target/demo-stack/watchdog.c` | Supervision that never blocks on the server it watches |
 | Resource-manager interposition (`_RESMGR_FLAG_BEFORE`, `dispatch_create_channel`, pathname fall-through) | `target/tools/jolt_interpose.c` | Delay and error faults on any resource-manager path, transparently forwarded to the real server |
 | `_NTO_CHF_UNBLOCK` / `_PULSE_CODE_UNBLOCK` | `jolt_interpose.c` | A slow server releases timed-out clients; shows why frozen servers can't |
+| Message forwarding (`MsgRead`, `srcmsglen`/`dstmsglen`, combined connects) | `jolt_interpose.c`, checked by `target/tests/interpose_check.c` | Requests of any size and replies such as `fstat()` pass through the interposer unchanged |
 | Kernel thread state via procfs (`devctl(DCMD_PROC_TIDSTATUS)`) | `target/tools/jolt_watch.c` | 20 ms-resolution blocking measurements |
 | Resource manager (`iofunc`, `resmgr_attach`, `dispatch`) | `target/demo-stack/node.c` (`imu`) | Realistic `/dev` sensor in the demo stack |
 | Pulses (`MsgSendPulse`) and receive timeouts | `node.c` heartbeat, `watchdog.c` | Hang detection that can't block the watchdog |

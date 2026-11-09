@@ -20,6 +20,12 @@
  *    at once - what a well-behaved slow server does.
  *  - name_attach() names (/dev/name/...) are exclusive: resmgr_attach returns
  *    EEXIST, so those services cannot be interposed by path.
+ *  - Only plain opens (_IO_CONNECT_OPEN) are interposed. Combined connects such
+ *    as stat() or unlink() by path get ENOENT and fall through to the real server.
+ *  - Messages of any size: the rest of a large request is fetched with MsgRead.
+ *    Replies use the client's own reply-buffer size (dstmsglen), because the
+ *    status MsgSend returns is not a reply length (except for _IO_READ).
+ *  - Forwarding is synchronous: one request at a time reaches the real server.
  */
 #include <errno.h>
 #include <fcntl.h>
@@ -36,10 +42,11 @@
 #include <sys/neutrino.h>
 
 #define MAXQ      64
-#define MAXMSG    2048
+#define MAXMSG    2048          /* receive buffer; larger requests are completed with MsgRead */
+#define MAXFWD    (1 << 20)     /* largest request or reply forwarded (1 MiB) */
 #define TICK_CODE (_PULSE_CODE_MINAVAIL + 7)
 
-typedef struct { int rcvid; double due_ms; size_t len; char msg[MAXMSG]; } held_t;
+typedef struct { int rcvid; double due_ms; size_t len, rlen; uint16_t type; char *msg; } held_t;
 
 static held_t q[MAXQ];
 static int nq = 0;
@@ -76,22 +83,29 @@ static void *opener(void *arg)
 
 static void forward(held_t *h)
 {
-    char reply[MAXMSG];
     int fd = up_fd;
     if (fd == -1) { MsgError(h->rcvid, EIO); n_err++; return; }
-    long st = MsgSend(fd, h->msg, h->len, reply, sizeof(reply));
+    char *reply = calloc(1, h->rlen ? h->rlen : 1);
+    if (!reply) { MsgError(h->rcvid, ENOMEM); n_err++; return; }
+    long st = MsgSend(fd, h->msg, h->len, reply, h->rlen);
     if (st == -1) {
         int e = errno;
         if (e == EBADF || e == ESRCH || e == ENOTCONN) { close(fd); up_fd = -1; e = EIO; }
         MsgError(h->rcvid, e);
         n_err++;
-        return;
+    } else {
+        /* For _IO_READ the status is the byte count; for everything else (stat,
+         * devctl, write...) the status is not a length, so pass the whole reply
+         * buffer back, sized to what the client asked for. */
+        size_t n = h->rlen;
+        if (h->type == _IO_READ) n = st >= 0 && (size_t)st < h->rlen ? (size_t)st : h->rlen;
+        MsgReply(h->rcvid, st, reply, n);
+        n_fwd++;
     }
-    MsgReply(h->rcvid, st, reply, st > 0 && st < (long)sizeof(reply) ? (size_t)st : 0);
-    n_fwd++;
+    free(reply);
 }
 
-static void drop(int i) { q[i] = q[--nq]; }
+static void drop(int i) { free(q[i].msg); q[i] = q[--nq]; }
 static void on_term(int s) { (void)s; stop = 1; }
 
 int main(int argc, char **argv)
@@ -156,6 +170,7 @@ int main(int argc, char **argv)
         }
         if (m.type == _IO_CONNECT) {
             if (info.pid == getpid()) { MsgError(rcvid, ENOENT); continue; }  /* fall through */
+            if (m.c.subtype != _IO_CONNECT_OPEN) { MsgError(rcvid, ENOENT); continue; }  /* stat, unlink...: real server */
             n_conn++;
             MsgReply(rcvid, EOK, NULL, 0);
             continue;
@@ -163,13 +178,19 @@ int main(int argc, char **argv)
         if (m.type == _IO_CLOSE) { MsgReply(rcvid, EOK, NULL, 0); continue; }  /* keep upstream open */
         if (err) { MsgError(rcvid, err); n_err++; continue; }
         if (nq == MAXQ) { MsgError(rcvid, EAGAIN); continue; }
-        q[nq].rcvid = rcvid;
-        q[nq].len = info.msglen < sizeof(m) ? info.msglen : sizeof(m);
-        memcpy(q[nq].msg, m.raw, q[nq].len);
-        q[nq].due_ms = now_ms() + delay_ms;
+        if (info.srcmsglen > MAXFWD || info.dstmsglen > MAXFWD) { MsgError(rcvid, E2BIG); n_err++; continue; }
+        char *buf = malloc(info.srcmsglen ? info.srcmsglen : 1);
+        if (!buf) { MsgError(rcvid, ENOMEM); n_err++; continue; }
+        size_t got = info.msglen < sizeof(m) ? info.msglen : sizeof(m);
+        memcpy(buf, m.raw, got);
+        if (info.srcmsglen > got &&                       /* fetch the rest of a large request */
+            MsgRead(rcvid, buf + got, info.srcmsglen - got, got) == -1) {
+            MsgError(rcvid, errno); free(buf); n_err++; continue;
+        }
+        q[nq] = (held_t){ rcvid, now_ms() + delay_ms, info.srcmsglen, info.dstmsglen, m.type, buf };
         nq++;
     }
-    for (int i = 0; i < nq; i++) MsgError(q[i].rcvid, EIO);
+    for (int i = 0; i < nq; i++) { MsgError(q[i].rcvid, EIO); free(q[i].msg); }
     printf("interpose: done. connects %ld, forwarded %ld, released-by-client-timeout %ld, errors %ld\n",
            n_conn, n_fwd, n_unblock, n_err);
     return 0;

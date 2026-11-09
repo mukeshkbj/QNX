@@ -5,7 +5,7 @@
 | Fault | Client | Verdict | Longest block (s) | Fix |
 | --- | --- | --- | --- | --- |
 | delay+1500ms:imu | planner | slow-intolerant | 1.49 | Arm TimerTimeout before each request to a server that can be slow; a live server honours the unblock, so the client gets ETIMEDOUT and carries on. |
-| freeze:actuator | planner | hang-no-timeout | 4.83 | Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT. |
+| freeze:actuator | planner | hang-no-timeout | 4.79 | Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT. |
 | freeze:imu | planner | hang-no-timeout | 4.83 | Arm TimerTimeout(CLOCK_MONOTONIC, _NTO_TIMEOUT_SEND|_NTO_TIMEOUT_REPLY, ...) before MsgSend and handle ETIMEDOUT. |
 | kill:imu | planner | server-not-restarted | 0.0 | Supervise the server (e.g. a watchdog or the System Launch and Monitor) so it is restarted after it dies. |
 | starve@p60:all | planner | starved | 0.0 | The client runs below background load. Give the critical loop a priority above it (e.g. `on -p 61 <cmd>` or pthread_setschedparam) or use adaptive partitioning. |
